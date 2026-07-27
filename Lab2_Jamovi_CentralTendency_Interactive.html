@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lab 2: Central Tendency and Variability</title>
+<style>
+  :root {
+    --ink: #1f2937;
+    --muted: #5b6472;
+    --line: #d7dbe0;
+    --paper: #ffffff;
+    --page: #eef1f4;
+    --navy: #24344d;
+    --navy-light: #33486a;
+    --accent: #2e6f5e;
+    --accent-bg: #e5f2ee;
+    --wrong: #a3402f;
+    --wrong-bg: #fbeae6;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--page);
+    color: var(--ink);
+    line-height: 1.55;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 32px 20px 80px; }
+  header.masthead { margin-bottom: 8px; }
+  .eyebrow {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--accent); margin: 0 0 8px;
+  }
+  h1 { font-size: 26px; font-weight: 700; margin: 0 0 4px; color: var(--navy); }
+  .subtitle { font-size: 15px; color: var(--muted); margin: 0 0 28px; }
+
+  section {
+    background: var(--paper); border: 1px solid var(--line); border-radius: 14px;
+    padding: 24px 26px; margin-bottom: 20px;
+  }
+  section > .part-label {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--accent); margin: 0 0 4px;
+  }
+  section > h2 { font-size: 19px; margin: 0 0 14px; color: var(--navy); }
+  h3.sub-h { font-size: 15px; margin: 22px 0 10px; color: var(--navy); border-top: 1px solid var(--line); padding-top: 16px; }
+  h3.sub-h:first-of-type { border-top: none; padding-top: 0; margin-top: 4px; }
+  p { font-size: 15px; margin: 0 0 14px; }
+  p:last-child { margin-bottom: 0; }
+  ul, ol { padding-left: 22px; font-size: 15px; margin: 0 0 14px; }
+  li { margin-bottom: 8px; }
+  .note {
+    font-size: 14px; color: var(--muted); font-style: italic;
+    border-left: 3px solid var(--line); padding-left: 12px; margin: 14px 0 0;
+  }
+  a { color: var(--accent); }
+
+  button.btn {
+    font-family: inherit; font-size: 14px; font-weight: 600; padding: 10px 18px;
+    border-radius: 8px; border: 1px solid var(--navy); background: var(--navy); color: #fff; cursor: pointer;
+  }
+  button.btn:hover { background: var(--navy-light); }
+  button.btn.secondary { background: transparent; color: var(--navy); }
+  button.btn.secondary:hover { background: rgba(36,52,77,0.06); }
+  button.btn.small { padding: 7px 12px; font-size: 13px; }
+
+  table.ref { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+  table.ref th, table.ref td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
+  table.ref th { background: var(--navy); color: #fff; font-weight: 600; }
+
+  .field-row { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+  .field-row label { font-size: 14px; font-weight: 600; color: var(--navy); }
+  input[type="text"], textarea, select {
+    font-family: inherit; font-size: 14px; padding: 8px 10px; border: 1px solid var(--line);
+    border-radius: 6px; background: var(--paper); color: var(--ink);
+  }
+  textarea { width: 100%; resize: vertical; min-height: 56px; }
+
+  .q-block { margin-bottom: 22px; }
+  .q-block:last-child { margin-bottom: 0; }
+  .q-num {
+    display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px;
+    border-radius: 50%; background: var(--navy); color: #fff; font-size: 12px; font-weight: 700; margin-right: 8px;
+  }
+  .sub-q { font-size: 14px; font-weight: 600; color: var(--navy); margin: 12px 0 4px; }
+  .sub-q.first { margin-top: 4px; }
+
+  .upload-box {
+    border: 1.5px dashed var(--line); border-radius: 10px; padding: 14px; margin-top: 8px; background: var(--page);
+  }
+  .upload-box .upload-label { font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 8px; display: block; }
+  .upload-box input[type="file"] { font-size: 13px; }
+  .upload-preview { margin-top: 10px; max-width: 100%; }
+  .upload-preview img { max-width: 100%; border-radius: 6px; border: 1px solid var(--line); display: block; }
+  .upload-status { font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+  .controls-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+  .save-banner { font-size: 13px; color: var(--muted); margin-top: 10px; }
+
+  #printSummary { display: none; }
+
+  @media print {
+    body { background: #fff; }
+    .no-print { display: none !important; }
+    section { border: none; padding: 0; margin-bottom: 18px; box-shadow: none; }
+    #printSummary { display: block !important; }
+    #printSummary h2 { color: #000; border-bottom: 1px solid #000; padding-bottom: 4px; }
+    #printSummary .p-q { margin-bottom: 16px; page-break-inside: avoid; }
+    #printSummary img { max-width: 100%; border: 1px solid #999; margin-top: 6px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead no-print">
+    <p class="eyebrow">Introductory Statistics for the Behavioral Sciences</p>
+    <h1>Lab 2: Central Tendency and Variability in jamovi</h1>
+    <p class="subtitle">Type your answers and attach your jamovi output directly on this page. When you're finished, use the button at the bottom to save everything as a PDF to upload to Canvas.</p>
+  </header>
+
+  <section class="no-print" id="howto">
+    <h2>How to use this page</h2>
+    <ol>
+      <li>Work through the parts below in order.</li>
+      <li>Wherever you see an upload box, take a screenshot of your jamovi output for that question and attach it there. Your typed answers and screenshots are both saved automatically in this browser as you go &mdash; as long as you keep using the same device and browser.</li>
+      <li>When you're finished, enter your name below, scroll to the bottom, and click <strong>Prepare &amp; save as PDF</strong>. Use your browser's print dialog to save it as a PDF, then upload that PDF to the Canvas assignment.</li>
+    </ol>
+    <div class="field-row" style="margin-top:4px;">
+      <label for="studentName">Your name:</label>
+      <input type="text" id="studentName" placeholder="First Last" style="flex:1; min-width:180px;" />
+    </div>
+  </section>
+
+  <section class="no-print">
+    <h2>Overview</h2>
+    <p>Last time, we focused on opening data and understanding what a dataset looks like. This lab moves into your first real statistics: <strong>central tendency</strong> (mean, median, mode) and <strong>variability</strong> (range, variance, standard deviation) &mdash; the numbers that describe what a typical score looks like, and how spread out scores are around it.</p>
+    <p style="margin-bottom:0;"><strong>Learning objectives</strong> &mdash; by the end of this lab you should be able to:</p>
+    <ul style="margin-top:10px;">
+      <li>Use jamovi's Exploration &rarr; Descriptives tool to calculate mean, median, mode, variance, standard deviation, and range</li>
+      <li>Build a frequency table for a categorical variable</li>
+      <li><strong>Identify a variable's level of measurement and use it to decide which descriptive statistics are actually appropriate</strong> &mdash; rather than calculating everything for every variable</li>
+      <li>Read and describe a histogram and box plot in plain language</li>
+      <li>Write a complete-sentence interpretation that refers explicitly to the statistics you calculated</li>
+      <li>Identify potential outliers using the mean &plusmn; 3&times;SD rule</li>
+    </ul>
+  </section>
+
+  <section class="no-print">
+    <p class="part-label">Part 1</p>
+    <h2>Continue with your dataset</h2>
+    <p>We'll keep using the same dataset from Lab 1.</p>
+    <ol>
+      <li>Open jamovi and open the file you saved last time, <code>YourLastName_JamoviTutorial.omv</code>.</li>
+      <li>If you don't have that file anymore, click the button below to download a fresh copy of the data, then re-open it as a new CSV in jamovi (you'll want to double-check the measure types again, since a fresh CSV import won't remember any changes you made last time).</li>
+    </ol>
+    <button class="btn secondary small" id="downloadCsvBtn">Download data (CSV)</button>
+  </section>
+
+  <section class="no-print">
+    <p class="part-label">Part 2</p>
+    <h2>Calculating descriptive statistics: worked examples</h2>
+
+    <h3 class="sub-h">Example A: a continuous (interval/ratio) variable</h3>
+    <p>Let's walk through <strong>ReactionTimeMS</strong> together (reaction time in milliseconds; lower scores mean a faster reaction). Because this variable is continuous, <strong>every</strong> descriptive statistic below is meaningful for it &mdash; that won't be true for every variable, as you'll see in a moment.</p>
+    <ol>
+      <li><strong>Step 1:</strong> Go to the <strong>Analyses</strong> tab.</li>
+      <li><strong>Step 2:</strong> Click <strong>Exploration</strong>. Select <strong>Descriptives</strong> from the options.</li>
+      <li><strong>Step 3:</strong> Move <strong>ReactionTimeMS</strong> from the box on the left to the box labeled <strong>Variables</strong> on the right.</li>
+      <li><strong>Step 4:</strong> Under <strong>Statistics</strong>, check <strong>Mode</strong>, <strong>Variance</strong>, and <strong>Range</strong>.</li>
+      <li><strong>Step 5:</strong> Under <strong>Plots</strong>, check <strong>Histogram</strong> and <strong>Box Plot</strong>.</li>
+    </ol>
+    <p>Here's what you should get:</p>
+    <table class="ref">
+      <tr><th></th><th>ReactionTimeMS</th></tr>
+      <tr><td>N</td><td>60</td></tr>
+      <tr><td>Missing</td><td>0</td></tr>
+      <tr><td>Mean</td><td>423.52</td></tr>
+      <tr><td>Median</td><td>425.00</td></tr>
+      <tr><td>Mode</td><td>404.00</td></tr>
+      <tr><td>Standard deviation</td><td>57.87</td></tr>
+      <tr><td>Variance</td><td>3348.46</td></tr>
+      <tr><td>Range</td><td>306</td></tr>
+      <tr><td>Minimum</td><td>257</td></tr>
+      <tr><td>Maximum</td><td>563</td></tr>
+    </table>
+    <p class="note" style="border-left-color: var(--accent);">When you interpret a variable, don't stop at the numbers &mdash; also look at the shape of the histogram. Is it roughly symmetric (one peak in the middle), skewed (a longer tail on one side), or does it have more than one peak (bimodal/multimodal)? This is part of what a complete interpretation includes.</p>
+    <p class="note">"Students' reaction times cluster fairly close together, with a mean of 423.52ms and a median of 425.00ms &mdash; very close to each other, which is a good sign the distribution isn't heavily skewed. The histogram confirms this: it's roughly symmetric with a single peak, just slightly pulled toward faster times. Scores differ from the mean by about 57.87ms on average (the standard deviation), and the full range spans 306ms (from 257 to 563) &mdash; indicating a moderate, fairly typical amount of variability for a reaction-time measure."</p>
+
+    <h3 class="sub-h">Example B: building a frequency table for a categorical variable</h3>
+    <p>Descriptive statistics like the mean and standard deviation don't make sense for every variable. For a categorical variable like <strong>Handedness</strong>, what we actually want is a <strong>frequency table</strong> &mdash; a count of how many cases fall into each category.</p>
+    <ol>
+      <li><strong>Step 1:</strong> Go to the <strong>Analyses</strong> tab. Click <strong>Exploration</strong>. Select <strong>Descriptives</strong>.</li>
+      <li><strong>Step 2:</strong> Move <strong>Handedness</strong> into the <strong>Variables</strong> box.</li>
+      <li><strong>Step 3:</strong> Under <strong>Statistics</strong>, check only <strong>Mode</strong> &mdash; mean, median, variance, and standard deviation don't apply to a nominal variable like this one, since its categories don't have a meaningful numeric order.</li>
+      <li><strong>Step 4:</strong> Expand the <strong>Frequency Tables</strong> section and check the box to display a frequency table.</li>
+    </ol>
+    <p>Here's what you should get:</p>
+    <table class="ref">
+      <tr><th>Handedness</th><th>Counts</th><th>% of Total</th><th>Cumulative %</th></tr>
+      <tr><td>Right</td><td>51</td><td>85.0%</td><td>85.0%</td></tr>
+      <tr><td>Left</td><td>8</td><td>13.3%</td><td>98.3%</td></tr>
+      <tr><td>Ambidextrous</td><td>1</td><td>1.7%</td><td>100.0%</td></tr>
+    </table>
+    <p class="note">"The large majority of students in this sample are right-handed (85.0%), with a smaller group of left-handed students (13.3%) and only one ambidextrous student (1.7%). Since Handedness is nominal, the mode &mdash; Right &mdash; is the only measure of central tendency that applies here, and the frequency table is what lets us describe the variable's distribution."</p>
+
+    <h3 class="sub-h">Which statistics go with which level of measurement?</h3>
+    <p>Use this as your reference for Part 3 below. Before calculating anything for a variable, decide what level of measurement it is first &mdash; that tells you which of these rows applies.</p>
+    <table class="ref">
+      <tr><th>Level of measurement</th><th>Central tendency</th><th>Variability</th><th>Other</th></tr>
+      <tr><td>Nominal</td><td>Mode only</td><td>&mdash;</td><td>Frequency table</td></tr>
+      <tr><td>Ordinal</td><td>Median, Mode</td><td>Range, Minimum, Maximum</td><td>Frequency table (optional)</td></tr>
+      <tr><td>Interval / Ratio (continuous)</td><td>Mean, Median, Mode</td><td>Standard deviation, Variance, Range, Minimum, Maximum</td><td>Histogram, Box plot</td></tr>
+    </table>
+    <p class="note">Notice that the mean and standard deviation only show up in the bottom row. If a variable is nominal or ordinal, leave those unchecked in jamovi &mdash; including them doesn't make sense mathematically, even if jamovi lets you check the box.</p>
+  </section>
+
+  <section class="no-print">
+    <p class="part-label">Part 3</p>
+    <h2>Lab activity, part 1: describing individual variables</h2>
+    <p class="no-print">For each variable below, first decide its level of measurement, then use the reference table above to choose <strong>only</strong> the statistics that are actually appropriate &mdash; don't just calculate everything. Use these values (and the shape of the distribution, where relevant) to describe the variable in complete sentences, referring explicitly to the statistics you calculated. <strong>Attach your jamovi output for each.</strong></p>
+
+    <div class="q-block">
+      <p><span class="q-num">1</span><strong>MoodRating</strong> (rated 1&ndash;5; higher scores indicate a more positive mood)</p>
+      <p class="sub-q first">What level of measurement is this variable?</p>
+      <textarea id="q1a"></textarea>
+      <p class="sub-q">Based on the median and mode, how would you describe the typical mood rating?</p>
+      <textarea id="q1b"></textarea>
+      <p class="sub-q">Based on the range, minimum, and maximum, do mood ratings appear consistent or variable?</p>
+      <textarea id="q1c"></textarea>
+      <p class="sub-q">Based on your histogram or frequency table, how would you describe the shape of the distribution (e.g., symmetric, skewed, more than one peak)?</p>
+      <textarea id="q1d"></textarea>
+      <div class="upload-box no-print">
+        <span class="upload-label">Attach your jamovi output (screenshot) for MoodRating</span>
+        <input type="file" id="q1_file" accept="image/*" />
+        <div class="upload-preview" id="q1_preview"></div>
+        <div class="upload-status" id="q1_status"></div>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <p><span class="q-num">2</span><strong>Major</strong></p>
+      <p class="sub-q first">What level of measurement is this variable?</p>
+      <textarea id="q2a"></textarea>
+      <p class="sub-q">What measures of central tendency and variability are appropriate here, and why?</p>
+      <textarea id="q2b"></textarea>
+      <p class="sub-q">What is the most frequent major in the dataset?</p>
+      <textarea id="q2c"></textarea>
+      <div class="upload-box no-print">
+        <span class="upload-label">Attach your jamovi output (screenshot / frequency table) for Major</span>
+        <input type="file" id="q2_file" accept="image/*" />
+        <div class="upload-preview" id="q2_preview"></div>
+        <div class="upload-status" id="q2_status"></div>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <p><span class="q-num">3</span><strong>SleepHours</strong> (average hours of sleep per night)</p>
+      <p class="sub-q first">What level of measurement is this variable?</p>
+      <textarea id="q3a"></textarea>
+      <p class="sub-q">Based on the mean and median, how would you describe the typical amount of sleep?</p>
+      <textarea id="q3b"></textarea>
+      <p class="sub-q">Based on the standard deviation and range, is there much variability in how much students sleep?</p>
+      <textarea id="q3c"></textarea>
+      <p class="sub-q">Based on your histogram, how would you describe the shape of the distribution?</p>
+      <textarea id="q3d"></textarea>
+      <div class="upload-box no-print">
+        <span class="upload-label">Attach your jamovi output (screenshot) for SleepHours</span>
+        <input type="file" id="q3_file" accept="image/*" />
+        <div class="upload-preview" id="q3_preview"></div>
+        <div class="upload-status" id="q3_status"></div>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <p><span class="q-num">4</span><strong>ExtraversionScore</strong> (a personality trait score; higher scores indicate greater extraversion)</p>
+      <p class="sub-q first">What level of measurement is this variable?</p>
+      <textarea id="q4a"></textarea>
+      <p class="sub-q">Based on the mean and median, how would you describe the typical extraversion score?</p>
+      <textarea id="q4b"></textarea>
+      <p class="sub-q">Based on the standard deviation and range, is there much variability in extraversion scores?</p>
+      <textarea id="q4c"></textarea>
+      <p class="sub-q">Based on your histogram, how would you describe the shape of the distribution?</p>
+      <textarea id="q4d"></textarea>
+      <div class="upload-box no-print">
+        <span class="upload-label">Attach your jamovi output (screenshot) for ExtraversionScore</span>
+        <input type="file" id="q4_file" accept="image/*" />
+        <div class="upload-preview" id="q4_preview"></div>
+        <div class="upload-status" id="q4_status"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="no-print">
+    <p class="part-label">Part 4</p>
+    <h2>Lab activity, part 2: comparing sleep and screen time</h2>
+    <p class="no-print">Use jamovi to compare <strong>SleepHours</strong> and <strong>ScreenTimeHours</strong> (both continuous, so all descriptive statistics apply to both) &mdash; you can put both variables in the Variables box at once to get them side by side in one output. <strong>Attach your jamovi output.</strong></p>
+    <p class="note" style="border-left-color: var(--accent);"><strong>Reminder:</strong> to check for outliers, use the mean &plusmn; 3 &times; standard deviation. Any score above (mean + 3&times;SD) or below (mean &minus; 3&times;SD) is considered an outlier.</p>
+
+    <div class="q-block">
+      <p class="sub-q first">Which variable had the higher mean &mdash; SleepHours or ScreenTimeHours?</p>
+      <textarea id="q5a"></textarea>
+      <p class="sub-q">On which variable did students score more consistently? Explain your reasoning using variability measures.</p>
+      <textarea id="q5b"></textarea>
+      <p class="sub-q">Are there any outlier values for either variable? Using the mean &plusmn; 3&times;SD rule, what values would be considered outliers for each?</p>
+      <textarea id="q5c"></textarea>
+      <div class="upload-box no-print">
+        <span class="upload-label">Attach your jamovi output (screenshot) comparing both variables</span>
+        <input type="file" id="q5_file" accept="image/*" />
+        <div class="upload-preview" id="q5_preview"></div>
+        <div class="upload-status" id="q5_status"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="no-print">
+    <h2>Submit your work</h2>
+    <p>Click <strong>Prepare &amp; save as PDF</strong> below. This will open your browser's print dialog &mdash; choose <strong>Save as PDF</strong> as the destination, then upload the resulting PDF to the Canvas assignment.</p>
+    <div class="controls-row">
+      <button class="btn" id="prepareBtn">Prepare &amp; save as PDF</button>
+      <button class="btn secondary" id="clearAllBtn">Clear all my answers</button>
+    </div>
+    <p class="save-banner" id="saveBanner"></p>
+    <p class="note">Your typed answers and attached images are saved automatically in this browser as you work, in case you need to come back later.</p>
+  </section>
+
+  <div id="printSummary">
+    <h2 id="ps-title"></h2>
+    <div id="ps-body"></div>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  var STORAGE_KEY = 'jamoviLab2Answers_v3';
+  var textFieldIds = ['studentName', 'q1a', 'q1b', 'q1c', 'q1d', 'q2a', 'q2b', 'q2c', 'q3a', 'q3b', 'q3c', 'q3d', 'q4a', 'q4b', 'q4c', 'q4d', 'q5a', 'q5b', 'q5c'];
+  var imageFieldIds = ['q1', 'q2', 'q3', 'q4', 'q5'];
+  var imageData = {};
+
+  var csvContent = "StudentID,ClassYear,Major,Handedness,StudyGroup,CaffeineIntake,MoodRating,SleepHours,ScreenTimeHours,ExtraversionScore,ReactionTimeMS\n" +
+"S001,Senior,Psychology,Right,Group C,Moderate,4,6.5,1.7,30.1,481\n" +
+"S002,Junior,Psychology,Right,Group C,Moderate,1,6.7,7.2,37.0,367\n" +
+"S003,Senior,Psychology,Right,Group A,Low,1,6.5,5.2,35.2,439\n" +
+"S004,Junior,Neuroscience,Right,Group C,Moderate,1,7.0,6.0,26.7,398\n" +
+"S005,First-year,Psychology,Right,Group A,Moderate,5,8.4,3.5,43.2,404\n" +
+"S006,Senior,Psychology,Right,Group B,Moderate,1,4.0,6.0,57.5,430\n" +
+"S007,Senior,Psychology,Right,Group B,None,3,6.5,6.4,47.2,454\n" +
+"S008,Senior,Psychology,Right,Group A,None,3,7.0,4.9,52.0,401\n" +
+"S009,First-year,Psychology,Right,Group A,High,3,7.1,4.9,60.9,479\n" +
+"S010,Junior,Psychology,Right,Group C,Low,4,6.4,5.0,63.3,357\n" +
+"S011,Sophomore,Psychology,Right,Group B,Low,5,4.9,2.9,49.3,420\n" +
+"S012,Senior,Psychology,Left,Group B,Low,2,7.2,4.2,63.5,563\n" +
+"S013,Junior,Neuroscience,Right,Group B,Moderate,5,8.7,4.2,50.9,432\n" +
+"S014,Senior,Psychology,Right,Group B,High,2,5.1,5.2,41.6,499\n" +
+"S015,Junior,Psychology,Right,Group C,Low,5,7.8,6.3,44.1,425\n" +
+"S016,Sophomore,Psychology,Right,Group A,High,3,6.4,2.6,35.2,452\n" +
+"S017,Junior,Psychology,Left,Group C,None,4,6.7,4.3,41.1,417\n" +
+"S018,First-year,Psychology,Right,Group C,Moderate,5,5.6,7.2,46.4,411\n" +
+"S019,Senior,Psychology,Right,Group B,Moderate,4,6.4,3.2,58.0,377\n" +
+"S020,Junior,Neuroscience,Right,Group A,None,5,8.2,3.0,67.2,444\n" +
+"S021,Senior,Psychology,Right,Group A,None,3,7.4,4.9,36.2,373\n" +
+"S022,Sophomore,Psychology,Right,Group C,Low,1,8.7,6.0,53.9,457\n" +
+"S023,Senior,Neuroscience,Left,Group C,High,3,8.1,4.5,39.6,480\n" +
+"S024,Senior,Psychology,Right,Group A,Moderate,1,7.3,6.9,54.7,440\n" +
+"S025,Senior,Psychology,Right,Group A,High,5,8.7,6.0,48.7,404\n" +
+"S026,Sophomore,Psychology,Right,Group A,Moderate,2,7.3,6.0,31.7,445\n" +
+"S027,Junior,Neuroscience,Right,Group A,Low,2,7.7,5.5,59.3,403\n" +
+"S028,First-year,Psychology,Right,Group C,Moderate,2,6.5,8.7,43.9,471\n" +
+"S029,Sophomore,Psychology,Right,Group C,None,4,6.9,4.1,44.7,319\n" +
+"S030,Junior,Psychology,Right,Group A,None,3,6.0,0.9,39.3,402\n" +
+"S031,Senior,Psychology,Right,Group C,Moderate,5,7.9,7.4,43.5,311\n" +
+"S032,Senior,Psychology,Left,Group A,Moderate,3,5.5,3.7,54.3,338\n" +
+"S033,Sophomore,Psychology,Right,Group B,Low,2,7.7,4.7,48.1,495\n" +
+"S034,Sophomore,Psychology,Right,Group B,Moderate,1,6.6,6.9,53.3,469\n" +
+"S035,Junior,Psychology,Right,Group C,Moderate,1,8.1,1.6,53.6,380\n" +
+"S036,Sophomore,Psychology,Right,Group C,High,2,7.6,2.2,63.2,337\n" +
+"S037,First-year,Psychology,Right,Group A,Moderate,5,8.8,1.6,46.6,257\n" +
+"S038,Junior,Psychology,Right,Group A,Low,3,7.6,3.1,35.2,390\n" +
+"S039,Sophomore,Psychology,Right,Group A,Low,5,5.1,5.3,60.7,553\n" +
+"S040,Junior,Undeclared,Right,Group A,Low,1,6.7,5.4,46.7,444\n" +
+"S041,Junior,Undeclared,Right,Group C,Moderate,1,5.5,5.0,61.1,389\n" +
+"S042,Senior,Psychology,Left,Group C,High,5,6.2,2.0,53.8,446\n" +
+"S043,Senior,Psychology,Right,Group A,Low,1,8.5,0.5,48.7,334\n" +
+"S044,Sophomore,Undeclared,Right,Group C,Low,1,7.5,4.6,53.5,404\n" +
+"S045,Senior,Neuroscience,Right,Group B,Low,3,6.0,3.7,69.5,425\n" +
+"S046,Senior,Neuroscience,Right,Group B,Moderate,5,5.7,5.3,70.8,415\n" +
+"S047,Sophomore,Psychology,Right,Group B,Moderate,4,6.8,5.8,50.7,463\n" +
+"S048,Sophomore,Psychology,Right,Group A,None,1,5.5,4.7,51.6,439\n" +
+"S049,Junior,Psychology,Right,Group C,None,5,6.1,5.9,60.8,457\n" +
+"S050,First-year,Undeclared,Left,Group A,Moderate,5,7.1,4.9,41.5,382\n" +
+"S051,Sophomore,Psychology,Right,Group A,None,5,8.1,5.5,53.3,469\n" +
+"S052,First-year,Psychology,Right,Group A,Moderate,5,7.5,3.2,49.7,510\n" +
+"S053,Senior,Psychology,Right,Group A,Low,2,4.3,4.2,53.1,367\n" +
+"S054,Junior,Psychology,Left,Group A,None,5,7.1,4.9,41.7,371\n" +
+"S055,Senior,Psychology,Right,Group A,High,2,6.9,6.0,34.1,493\n" +
+"S056,Senior,Neuroscience,Right,Group C,Low,5,7.3,3.8,29.3,409\n" +
+"S057,Junior,Neuroscience,Right,Group C,Low,3,8.6,5.4,38.8,497\n" +
+"S058,Junior,Neuroscience,Ambidextrous,Group A,Low,4,4.5,4.0,45.4,396\n" +
+"S059,First-year,Psychology,Left,Group A,None,4,6.1,4.3,47.1,500\n" +
+"S060,First-year,Psychology,Right,Group B,None,4,7.4,6.0,69.4,427\n";
+
+  /* ---------- Download CSV ---------- */
+  document.getElementById('downloadCsvBtn').addEventListener('click', function () {
+    var blob = new Blob([csvContent], { type: 'text/csv' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'intro_jamovi_data.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  /* ---------- Image upload: downscale + preview + store ---------- */
+  function handleImageUpload(key, file) {
+    var statusEl = document.getElementById(key + '_status');
+    var previewEl = document.getElementById(key + '_preview');
+    if (!file) return;
+    if (!file.type || file.type.indexOf('image/') !== 0) {
+      statusEl.textContent = 'Please choose an image file.';
+      return;
+    }
+    statusEl.textContent = 'Processing...';
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      var img = new Image();
+      img.onload = function () {
+        var maxW = 900;
+        var scale = Math.min(1, maxW / img.width);
+        var canvas = document.createElement('canvas');
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        var dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+        imageData[key] = dataUrl;
+        previewEl.innerHTML = '<img src="' + dataUrl + '" alt="Attached jamovi output" />';
+        statusEl.textContent = 'Attached.';
+        saveState();
+      };
+      img.onerror = function () { statusEl.textContent = 'Could not read that image.'; };
+      img.src = e.target.result;
+    };
+    reader.onerror = function () { statusEl.textContent = 'Could not read that file.'; };
+    reader.readAsDataURL(file);
+  }
+
+  imageFieldIds.forEach(function (key) {
+    var input = document.getElementById(key + '_file');
+    input.addEventListener('change', function (e) {
+      handleImageUpload(key, e.target.files && e.target.files[0]);
+    });
+  });
+
+  /* ---------- Save / restore progress ---------- */
+  function saveState() {
+    var data = { text: {}, images: imageData };
+    textFieldIds.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) data.text[id] = el.value;
+    });
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      document.getElementById('saveBanner').textContent = 'Saved in this browser at ' + new Date().toLocaleTimeString() + '.';
+    } catch (e) {
+      document.getElementById('saveBanner').textContent = 'Could not autosave (browser storage may be full) \u2014 consider preparing your PDF soon.';
+    }
+  }
+
+  function restoreState() {
+    var raw;
+    try { raw = localStorage.getItem(STORAGE_KEY); } catch (e) { raw = null; }
+    if (!raw) return;
+    var data;
+    try { data = JSON.parse(raw); } catch (e) { return; }
+    if (data.text) {
+      textFieldIds.forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el && data.text[id] !== undefined) el.value = data.text[id];
+      });
+    }
+    if (data.images) {
+      imageFieldIds.forEach(function (key) {
+        if (data.images[key]) {
+          imageData[key] = data.images[key];
+          document.getElementById(key + '_preview').innerHTML = '<img src="' + data.images[key] + '" alt="Attached jamovi output" />';
+          document.getElementById(key + '_status').textContent = 'Attached.';
+        }
+      });
+    }
+  }
+
+  function debounce(fn, wait) {
+    var t;
+    return function () { clearTimeout(t); t = setTimeout(fn, wait); };
+  }
+
+  textFieldIds.forEach(function (id) {
+    var el = document.getElementById(id);
+    if (el) el.addEventListener('input', debounce(saveState, 400));
+  });
+
+  document.getElementById('clearAllBtn').addEventListener('click', function () {
+    if (!confirm('Clear all saved answers and attached images on this page? This cannot be undone.')) return;
+    try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+    textFieldIds.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    imageFieldIds.forEach(function (key) {
+      imageData[key] = null;
+      document.getElementById(key + '_preview').innerHTML = '';
+      document.getElementById(key + '_status').textContent = '';
+      document.getElementById(key + '_file').value = '';
+    });
+    document.getElementById('saveBanner').textContent = 'Cleared.';
+  });
+
+  restoreState();
+
+  /* ---------- Print summary ---------- */
+  function val(id) {
+    var el = document.getElementById(id);
+    return el ? (el.value || '').trim() || '(no answer entered)' : '(no answer entered)';
+  }
+
+  function imgHtml(key) {
+    return imageData[key]
+      ? '<img src="' + imageData[key] + '" alt="jamovi output" />'
+      : '<p style="color:#a3402f; font-style:italic;">No output attached for this question.</p>';
+  }
+
+  function buildPrintSummary() {
+    var name = val('studentName');
+    document.getElementById('ps-title').textContent = 'Lab 2: Central Tendency and Variability \u2014 ' + name;
+    var b = document.getElementById('ps-body');
+    b.innerHTML =
+      '<div class="p-q"><h3>Part 1, Q1: MoodRating</h3>' +
+        '<p><strong>Level of measurement:</strong> ' + val('q1a') + '</p>' +
+        '<p><strong>Typical mood rating:</strong> ' + val('q1b') + '</p>' +
+        '<p><strong>Consistent or variable:</strong> ' + val('q1c') + '</p>' +
+        '<p><strong>Shape of the distribution:</strong> ' + val('q1d') + '</p>' +
+        imgHtml('q1') +
+      '</div>' +
+      '<div class="p-q"><h3>Part 1, Q2: Major</h3>' +
+        '<p><strong>Level of measurement:</strong> ' + val('q2a') + '</p>' +
+        '<p><strong>Appropriate measures and why:</strong> ' + val('q2b') + '</p>' +
+        '<p><strong>Most frequent major:</strong> ' + val('q2c') + '</p>' +
+        imgHtml('q2') +
+      '</div>' +
+      '<div class="p-q"><h3>Part 1, Q3: SleepHours</h3>' +
+        '<p><strong>Level of measurement:</strong> ' + val('q3a') + '</p>' +
+        '<p><strong>Typical amount of sleep:</strong> ' + val('q3b') + '</p>' +
+        '<p><strong>Variability:</strong> ' + val('q3c') + '</p>' +
+        '<p><strong>Shape of the distribution:</strong> ' + val('q3d') + '</p>' +
+        imgHtml('q3') +
+      '</div>' +
+      '<div class="p-q"><h3>Part 1, Q4: ExtraversionScore</h3>' +
+        '<p><strong>Level of measurement:</strong> ' + val('q4a') + '</p>' +
+        '<p><strong>Typical extraversion score:</strong> ' + val('q4b') + '</p>' +
+        '<p><strong>Variability:</strong> ' + val('q4c') + '</p>' +
+        '<p><strong>Shape of the distribution:</strong> ' + val('q4d') + '</p>' +
+        imgHtml('q4') +
+      '</div>' +
+      '<div class="p-q"><h3>Part 2: Comparing SleepHours and ScreenTimeHours</h3>' +
+        '<p><strong>Higher mean:</strong> ' + val('q5a') + '</p>' +
+        '<p><strong>More consistent, with reasoning:</strong> ' + val('q5b') + '</p>' +
+        '<p><strong>Outliers (mean \u00b1 3\u00d7SD rule):</strong> ' + val('q5c') + '</p>' +
+        imgHtml('q5') +
+      '</div>';
+  }
+
+  document.getElementById('prepareBtn').addEventListener('click', function () {
+    buildPrintSummary();
+    setTimeout(function () { window.print(); }, 50);
+  });
+})();
+</script>
+</body>
+</html>
