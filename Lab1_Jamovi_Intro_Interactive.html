@@ -333,8 +333,21 @@
   <header class="masthead">
     <p class="eyebrow">Introductory Statistics for the Behavioral Sciences</p>
     <h1>Jamovi Tutorial</h1>
-    <p class="subtitle">Type your answers directly into this page as you work. When you're done, use the Export section at the bottom to copy everything into Canvas.</p>
+    <p class="subtitle">Type your answers directly into this page as you work, then download your answers as a file to submit on Canvas.</p>
   </header>
+
+  <section id="howto">
+    <h2>How to use this page</h2>
+    <ol>
+      <li>Work through the parts below in order &mdash; each one builds on the last.</li>
+      <li>Type your answers directly into the boxes as you go. Everything saves automatically in this browser, so if you close the tab or refresh, your work will still be here when you come back &mdash; as long as you use the same device and browser each time.</li>
+      <li>When you're finished, enter your name below, then scroll to the very bottom and click <strong>Download my answers (.txt)</strong>. Upload that file to the Canvas assignment &mdash; that's your submission.</li>
+    </ol>
+    <div class="field-row" style="margin-top:4px;">
+      <label for="studentName">Your name:</label>
+      <input type="text" id="studentName" placeholder="First Last" style="flex:1; min-width:180px;" />
+    </div>
+  </section>
 
   <section>
     <h2>Overview</h2>
@@ -510,16 +523,17 @@
   </section>
 
   <section>
-    <h2>Export your answers</h2>
-    <p>Your answers are saved automatically in this browser as you type. When you're ready to submit, click Build export text below, then copy everything into the Canvas assignment (or download it as a text file to attach).</p>
+    <h2>Submit your work</h2>
+    <p>Click <strong>Download my answers (.txt)</strong> below, then upload that file to the Canvas assignment. That's your submission for this lab &mdash; no copy/paste needed.</p>
     <div class="controls-row">
-      <button class="btn" id="buildExportBtn">Build export text</button>
+      <button class="btn" id="downloadExportBtn">Download my answers (.txt)</button>
+      <button class="btn secondary" id="buildExportBtn">Preview my answers</button>
       <button class="btn secondary" id="copyExportBtn">Copy to clipboard</button>
-      <button class="btn secondary" id="downloadExportBtn">Download as .txt</button>
       <button class="btn secondary" id="clearAllBtn">Clear all my answers</button>
     </div>
-    <textarea id="exportOut" readonly style="margin-top:14px;"></textarea>
+    <textarea id="exportOut" readonly style="margin-top:14px;" placeholder="Click &quot;Preview my answers&quot; to see what will be included in your download."></textarea>
     <p class="save-banner" id="saveBanner"></p>
+    <p class="note">The downloaded file will be named using the name you entered above, so it's easy for your instructor to tell submissions apart.</p>
   </section>
 
 </div>
@@ -729,7 +743,7 @@
   });
 
   /* ---------- Save / restore progress ---------- */
-  var allFieldIds = ['rowCount', 'colCount', 'countExplain', 'q10', 'tab1', 'tab2', 'tab3', 'tab4'];
+  var allFieldIds = ['studentName', 'rowCount', 'colCount', 'countExplain', 'q10', 'tab1', 'tab2', 'tab3', 'tab4'];
   variables.forEach(function (v, i) {
     allFieldIds.push('vtype_' + i, 'vright_' + i, 'vdesc_' + i);
   });
@@ -793,6 +807,7 @@
   function buildExportText() {
     var lines = [];
     lines.push('Jamovi Tutorial \u2014 answers');
+    lines.push('Name: ' + (val('studentName') || '(not entered)'));
     lines.push('=========================================');
     lines.push('');
     lines.push('Q8. Tabs across the top of the jamovi window (left to right):');
@@ -813,6 +828,12 @@
     return lines.join('\n');
   }
 
+  function filenameSafeName() {
+    var n = val('studentName');
+    if (!n) return 'student';
+    return n.trim().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_-]/g, '');
+  }
+
   document.getElementById('buildExportBtn').addEventListener('click', function () {
     document.getElementById('exportOut').value = buildExportText();
   });
@@ -830,13 +851,13 @@
   });
 
   document.getElementById('downloadExportBtn').addEventListener('click', function () {
-    var text = document.getElementById('exportOut').value || buildExportText();
+    var text = buildExportText();
     document.getElementById('exportOut').value = text;
     var blob = new Blob([text], { type: 'text/plain' });
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
     a.href = url;
-    a.download = 'jamovi_tutorial_answers.txt';
+    a.download = filenameSafeName() + '_jamovi_tutorial_answers.txt';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
