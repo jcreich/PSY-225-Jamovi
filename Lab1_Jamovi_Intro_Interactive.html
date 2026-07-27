@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Jamovi Tutorial</title>
+<style>
+  :root {
+    --ink: #1f2937;
+    --muted: #5b6472;
+    --line: #d7dbe0;
+    --paper: #ffffff;
+    --page: #eef1f4;
+    --navy: #24344d;
+    --navy-light: #33486a;
+    --accent: #2e6f5e;
+    --accent-bg: #e5f2ee;
+    --wrong: #a3402f;
+    --wrong-bg: #fbeae6;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--page);
+    color: var(--ink);
+    line-height: 1.55;
+  }
+  .wrap {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 32px 20px 80px;
+  }
+  header.masthead {
+    margin-bottom: 8px;
+  }
+  .eyebrow {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 8px;
+  }
+  h1 {
+    font-size: 26px;
+    font-weight: 700;
+    margin: 0 0 4px;
+    color: var(--navy);
+  }
+  .subtitle {
+    font-size: 15px;
+    color: var(--muted);
+    margin: 0 0 28px;
+  }
+
+  section {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 24px 26px;
+    margin-bottom: 20px;
+  }
+  section > .part-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 4px;
+  }
+  section > h2 {
+    font-size: 19px;
+    margin: 0 0 14px;
+    color: var(--navy);
+  }
+  p { font-size: 15px; margin: 0 0 14px; }
+  p:last-child { margin-bottom: 0; }
+  ul, ol { padding-left: 22px; font-size: 15px; margin: 0 0 14px; }
+  li { margin-bottom: 8px; }
+  .note {
+    font-size: 14px;
+    color: var(--muted);
+    font-style: italic;
+    border-left: 3px solid var(--line);
+    padding-left: 12px;
+    margin: 14px 0 0;
+  }
+
+  a { color: var(--accent); }
+
+  button.btn {
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: 1px solid var(--navy);
+    background: var(--navy);
+    color: #fff;
+    cursor: pointer;
+  }
+  button.btn:hover { background: var(--navy-light); }
+  button.btn.secondary {
+    background: transparent;
+    color: var(--navy);
+  }
+  button.btn.secondary:hover { background: rgba(36,52,77,0.06); }
+  button.btn.small { padding: 7px 12px; font-size: 13px; }
+
+  /* Fake jamovi window chrome (Part 4 activity) */
+  .app-window {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin: 18px 0;
+  }
+  .app-titlebar {
+    background: var(--navy);
+    color: #dbe3ee;
+    font-size: 12px;
+    padding: 7px 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .dot { width: 9px; height: 9px; border-radius: 50%; background: #6b7a94; display: inline-block; }
+  .app-titlebar span.name { margin-left: 6px; opacity: 0.85; }
+  .ribbon {
+    background: var(--navy-light);
+    display: flex;
+    align-items: stretch;
+    padding: 0 8px;
+    flex-wrap: wrap;
+  }
+  .hamburger, .settings {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #cdd8e6;
+    font-size: 16px;
+    padding: 0 12px;
+  }
+  .settings { margin-left: auto; font-size: 18px; }
+  .tab-slot {
+    position: relative;
+    padding: 10px 6px 8px;
+    min-width: 96px;
+  }
+  .tab-slot label {
+    display: block;
+    font-size: 10px;
+    color: #aebdd2;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 4px;
+    text-align: center;
+  }
+  .tab-slot input {
+    width: 100%;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 6px;
+    color: #f4f6f9;
+    font-size: 13px;
+    padding: 6px 8px;
+    text-align: center;
+    outline: none;
+    font-family: inherit;
+  }
+  .tab-slot input::placeholder { color: #93a2b8; }
+  .tab-slot input:focus { border-color: #9fd8c4; background: rgba(255,255,255,0.14); }
+  .tab-slot.correct input { border-color: var(--accent); }
+  .tab-slot.incorrect input { border-color: #e0a25c; }
+  .tab-slot .answer-tag {
+    display: none;
+    font-size: 11px;
+    text-align: center;
+    margin-top: 4px;
+    color: #f4f6f9;
+  }
+  .tab-slot.revealed .answer-tag { display: block; }
+  .spreadsheet {
+    background:
+      repeating-linear-gradient(#fff 0 27px, #f3f5f7 27px 28px),
+      repeating-linear-gradient(90deg, #fff 0 108px, #f3f5f7 108px 110px);
+    height: 120px;
+    border-top: 1px solid var(--line);
+  }
+
+  #tabStatus, #countStatus {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 10px 0 0;
+    min-height: 20px;
+  }
+  #tabStatus.good, #countStatus.good { color: var(--accent); }
+  #tabStatus.partial, #countStatus.partial { color: #a3662f; }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .info-card {
+    background: var(--page);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+  .info-card.show { opacity: 1; transform: translateY(0); }
+  .info-card h3 { font-size: 14px; margin: 0 0 6px; color: var(--navy); }
+  .info-card p { font-size: 13px; color: var(--muted); margin: 0; }
+
+  table.ref {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-top: 8px;
+  }
+  table.ref th, table.ref td {
+    border: 1px solid var(--line);
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+  }
+  table.ref th {
+    background: var(--navy);
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .field-row {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+  }
+  .field-row label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--navy);
+  }
+  input[type="number"], input[type="text"], textarea, select {
+    font-family: inherit;
+    font-size: 14px;
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--paper);
+    color: var(--ink);
+  }
+  input[type="number"] { width: 90px; }
+  textarea {
+    width: 100%;
+    resize: vertical;
+    min-height: 60px;
+  }
+  .qcheck.correct input[type="number"] { border-color: var(--accent); background: var(--accent-bg); }
+  .qcheck.incorrect input[type="number"] { border-color: var(--wrong); background: var(--wrong-bg); }
+
+  .vtable-wrap { overflow-x: auto; }
+  table.vtable {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    min-width: 640px;
+  }
+  table.vtable th {
+    background: var(--navy);
+    color: #fff;
+    font-size: 12px;
+    padding: 8px;
+    text-align: left;
+  }
+  table.vtable td {
+    border: 1px solid var(--line);
+    padding: 6px;
+    vertical-align: top;
+  }
+  table.vtable td.varname {
+    font-weight: 600;
+    white-space: nowrap;
+    background: var(--page);
+  }
+  table.vtable select { width: 100%; }
+  table.vtable textarea { width: 100%; min-height: 40px; font-size: 12px; }
+
+  .q-block { margin-bottom: 20px; }
+  .q-block:last-child { margin-bottom: 0; }
+  .q-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--navy);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    margin-right: 8px;
+  }
+
+  #exportOut {
+    width: 100%;
+    min-height: 260px;
+    font-family: ui-monospace, "SFMono-Regular", Menlo, monospace;
+    font-size: 12px;
+    white-space: pre;
+  }
+  .save-banner {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 10px;
+  }
+  .controls-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .info-card { transition: none; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">Introductory Statistics for the Behavioral Sciences</p>
+    <h1>Jamovi Tutorial</h1>
+    <p class="subtitle">Type your answers directly into this page as you work, then download your answers as a file to submit on Canvas.</p>
+  </header>
+
+  <section id="howto">
+    <h2>How to use this page</h2>
+    <ol>
+      <li>Work through the parts below in order &mdash; each one builds on the last.</li>
+      <li>Type your answers directly into the boxes as you go. Everything saves automatically in this browser, so if you close the tab or refresh, your work will still be here when you come back &mdash; as long as you use the same device and browser each time.</li>
+      <li>When you're finished, enter your name below, then scroll to the very bottom and click <strong>Download my answers (.txt)</strong>. Upload that file to the Canvas assignment &mdash; that's your submission.</li>
+    </ol>
+    <div class="field-row" style="margin-top:4px;">
+      <label for="studentName">Your name:</label>
+      <input type="text" id="studentName" placeholder="First Last" style="flex:1; min-width:180px;" />
+    </div>
+  </section>
+
+  <section>
+    <h2>Overview</h2>
+    <p>This assignment introduces you to jamovi, the software we will use throughout the semester for statistical analysis. Your only goals this week are to (1) get jamovi installed and running on your own computer, and (2) become comfortable opening a data file and understanding what you are looking at &mdash; the variables, the values, and how jamovi labels different kinds of data.</p>
+    <p>This tutorial does NOT ask you to calculate anything (no means, medians, standard deviations, or graphs of variability). We will cover descriptive statistics and variability next. For now, just explore and get oriented.</p>
+    <p style="margin-bottom:0;"><strong>Learning objectives</strong> &mdash; by the end of this assignment you should be able to:</p>
+    <ul style="margin-top:10px;">
+      <li>Download and install jamovi on your own computer</li>
+      <li>Open a .csv data file in jamovi</li>
+      <li>Distinguish the Data view from the Variables view</li>
+      <li>Identify a variable's measure type (Nominal, Ordinal, Continuous, or ID) and explain what that means</li>
+      <li>Describe, in your own words, what each variable in a dataset represents</li>
+    </ul>
+  </section>
+
+  <section>
+    <p class="part-label">Part 1</p>
+    <h2>Download and install jamovi</h2>
+    <ol>
+      <li>Go to <a href="https://www.jamovi.org" target="_blank" rel="noopener">jamovi.org</a> and click &ldquo;Download.&rdquo;</li>
+      <li>Choose the version that matches your operating system (Windows or macOS). If you're unsure which to pick, choose the &ldquo;solid&rdquo; (not &ldquo;cloud&rdquo; or &ldquo;rj-editor&rdquo;) release &mdash; this is the standard desktop version.</li>
+      <li>Install the program using the default settings. This may take several minutes.</li>
+      <li>Open jamovi once installation finishes. You should see a blank spreadsheet-style window with a row of tabs across the top. We'll explore these in Part 4.</li>
+    </ol>
+    <p class="note">If you run into installation trouble (e.g., a Chromebook, a locked-down laptop, or an unsupported OS), you can also use jamovi's cloud version at <a href="https://cloud.jamovi.org" target="_blank" rel="noopener">cloud.jamovi.org</a> &mdash; no installation required. Let me know if you need help getting set up.</p>
+  </section>
+
+  <section>
+    <p class="part-label">Part 2</p>
+    <h2>Get the data</h2>
+    <p>This is a simulated dataset representing 60 fictional students in an introductory psychology course. It is not real data &mdash; it was generated for practice purposes only.</p>
+    <button class="btn" id="downloadCsvBtn">Download data (CSV)</button>
+    <p class="note">Save it somewhere you can find it, like your Desktop or a course folder.</p>
+  </section>
+
+  <section>
+    <p class="part-label">Part 3</p>
+    <h2>Open the data in jamovi</h2>
+    <ol>
+      <li>In jamovi, click the three-lined &ldquo;hamburger&rdquo; menu in the top-left corner, then choose Open &rarr; This PC (or Browse), and navigate to <code>intro_jamovi_data.csv</code>.</li>
+      <li>Once it loads, you should see a spreadsheet full of data, with each row representing one student and each column representing one variable.</li>
+      <li>Take a moment to scroll through the data. Don't worry about understanding every value yet &mdash; just get a feel for what a raw dataset looks like.</li>
+    </ol>
+  </section>
+
+  <section>
+    <p class="part-label">Part 4</p>
+    <h2>Explore the interface</h2>
+    <p>Before reading on, take a look at the very top of the jamovi window, just above the spreadsheet, where you'll see a row of tabs. Below is a simplified sketch of that window.</p>
+
+    <div class="q-block">
+      <p><span class="q-num">8</span><strong>List all of the tabs you see running across the top of the jamovi window, from left to right.</strong> Type your best guess into each box, then click Reveal.</p>
+
+      <div class="app-window">
+        <div class="app-titlebar">
+          <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+          <span class="name">jamovi &mdash; intro_jamovi_data.csv</span>
+        </div>
+        <div class="ribbon">
+          <div class="hamburger" aria-hidden="true">&#9776;</div>
+          <div class="tab-slot" data-answer="Variables">
+            <label for="tab1">Tab 1</label>
+            <input type="text" id="tab1" placeholder="?" autocomplete="off" />
+            <div class="answer-tag"></div>
+          </div>
+          <div class="tab-slot" data-answer="Data">
+            <label for="tab2">Tab 2</label>
+            <input type="text" id="tab2" placeholder="?" autocomplete="off" />
+            <div class="answer-tag"></div>
+          </div>
+          <div class="tab-slot" data-answer="Analyses">
+            <label for="tab3">Tab 3</label>
+            <input type="text" id="tab3" placeholder="?" autocomplete="off" />
+            <div class="answer-tag"></div>
+          </div>
+          <div class="tab-slot" data-answer="Edit">
+            <label for="tab4">Tab 4</label>
+            <input type="text" id="tab4" placeholder="?" autocomplete="off" />
+            <div class="answer-tag"></div>
+          </div>
+          <div class="settings" aria-hidden="true">&#8942;</div>
+        </div>
+        <div class="spreadsheet" aria-hidden="true"></div>
+      </div>
+
+      <div class="controls-row">
+        <button class="btn small" id="revealTabsBtn">Reveal</button>
+        <button class="btn small secondary" id="resetTabsBtn">Clear</button>
+      </div>
+      <div id="tabStatus" role="status" aria-live="polite"></div>
+
+      <div class="info-grid" id="infoGrid">
+        <div class="info-card" data-tab="Variables">
+          <h3>Variables</h3>
+          <p>Shows one row per variable, listing each column's name, its measure type (Nominal, Ordinal, Continuous, or ID), and other settings.</p>
+        </div>
+        <div class="info-card" data-tab="Data">
+          <h3>Data</h3>
+          <p>Shows your raw spreadsheet, row by row. Each row is a case (a participant); each column is a variable.</p>
+        </div>
+        <div class="info-card" data-tab="Analyses">
+          <h3>Analyses</h3>
+          <p>Where you run statistical tests &mdash; t-tests, ANOVA, regression, and more. This is where we'll spend most of our time later this semester.</p>
+        </div>
+        <div class="info-card" data-tab="Edit">
+          <h3>Edit</h3>
+          <p>Lets you format and annotate the results panel &mdash; add titles, notes, and rearrange output.</p>
+        </div>
+      </div>
+    </div>
+
+    <p>Jamovi guesses each variable's measure type automatically when it imports data, but its guess is not always correct or ideal &mdash; part of your job as a researcher is to check its work. Click a variable's Measure type dropdown in Variables view to see or change the assigned type. Here's a quick reference:</p>
+
+    <table class="ref">
+      <tr><th>Measure type</th><th>Icon</th><th>What it means</th></tr>
+      <tr><td>Nominal</td><td>Three colored circles</td><td>Categories with no meaningful order (e.g., major, handedness)</td></tr>
+      <tr><td>Ordinal</td><td>Bar chart of 3 bars</td><td>Categories with a meaningful order, but unequal spacing between levels (e.g., class year, caffeine intake level)</td></tr>
+      <tr><td>Continuous</td><td>Ruler</td><td>Numeric values where the distance between numbers is meaningful (e.g., reaction time, sleep hours)</td></tr>
+      <tr><td>ID</td><td>Key/fingerprint icon</td><td>A unique identifier for each case, not meant to be analyzed as data (e.g., StudentID)</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <p class="part-label">Part 5</p>
+    <h2>Save your work</h2>
+    <p>jamovi has its own file format, <strong>.omv</strong>, which saves your data <em>and</em> anything else you've set up in jamovi (variable settings, and later in the semester, your analyses and results) all in one file. Saving now means you can reopen this exact file later and pick up right where you left off, instead of re-importing the CSV from scratch.</p>
+    <ol>
+      <li>In jamovi, click the hamburger menu (&#9776;) in the top-left corner, then choose <strong>Save As</strong>.</li>
+      <li>Choose <strong>This PC</strong> (or Browse), pick a location you'll remember (like your Desktop or a course folder), and give the file a clear name &mdash; for example, <code>YourLastName_JamoviTutorial.omv</code>. jamovi adds the <code>.omv</code> extension automatically.</li>
+      <li>Click <strong>Save</strong>.</li>
+    </ol>
+    <p class="note">This is different from the Export section at the bottom of this page. Saving here keeps your work inside jamovi; exporting at the bottom saves your typed answers on this page so you can submit them to Canvas. You'll want to do both.</p>
+  </section>
+
+  <section>
+    <p class="part-label">Part 6</p>
+    <h2>Assignment questions</h2>
+
+    <div class="q-block">
+      <p><span class="q-num">9</span><strong>How many participants (rows) and how many variables (columns) are in this dataset?</strong> How can you tell, using jamovi's Data view and/or Variables view?</p>
+      <div class="field-row qcheck" id="countRow">
+        <label for="rowCount">Rows:</label>
+        <input type="number" id="rowCount" min="0" />
+        <label for="colCount">Columns:</label>
+        <input type="number" id="colCount" min="0" />
+        <button class="btn small secondary" id="checkCountBtn">Check</button>
+      </div>
+      <div id="countStatus" role="status" aria-live="polite"></div>
+      <textarea id="countExplain" placeholder="How could you tell? (a sentence or two)"></textarea>
+    </div>
+
+    <div class="q-block">
+      <p>Now complete the table below for every variable in the dataset. You do not need to calculate anything &mdash; just look at the data and use the Variables view in jamovi.</p>
+      <div class="vtable-wrap">
+        <table class="vtable" id="varTable">
+          <thead>
+            <tr>
+              <th style="width:110px;">Variable</th>
+              <th style="width:130px;">Measure type jamovi assigned</th>
+              <th style="width:100px;">Right type?</th>
+              <th>What does this variable represent?</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="q-block">
+      <p><span class="q-num">10</span>What is one thing about the jamovi interface that you found confusing or would like clarified before we move on to analyzing this data?</p>
+      <textarea id="q10"></textarea>
+    </div>
+  </section>
+
+  <section>
+    <h2>Submit your work</h2>
+    <p>Click <strong>Download my answers (.txt)</strong> below, then upload that file to the Canvas assignment. That's your submission for this lab &mdash; no copy/paste needed.</p>
+    <div class="controls-row">
+      <button class="btn" id="downloadExportBtn">Download my answers (.txt)</button>
+      <button class="btn secondary" id="buildExportBtn">Preview my answers</button>
+      <button class="btn secondary" id="copyExportBtn">Copy to clipboard</button>
+      <button class="btn secondary" id="clearAllBtn">Clear all my answers</button>
+    </div>
+    <textarea id="exportOut" readonly style="margin-top:14px;" placeholder="Click &quot;Preview my answers&quot; to see what will be included in your download."></textarea>
+    <p class="save-banner" id="saveBanner"></p>
+    <p class="note">The downloaded file will be named using the name you entered above, so it's easy for your instructor to tell submissions apart.</p>
+  </section>
+
+</div>
+
+<script>
+(function () {
+  var STORAGE_KEY = 'jamoviTutorialAnswers_v1';
+
+  var variables = [
+    { name: 'StudentID' },
+    { name: 'ClassYear' },
+    { name: 'Major' },
+    { name: 'Handedness' },
+    { name: 'StudyGroup' },
+    { name: 'CaffeineIntake' },
+    { name: 'MoodRating' },
+    { name: 'SleepHours' },
+    { name: 'ScreenTimeHours' },
+    { name: 'ExtraversionScore' },
+    { name: 'ReactionTimeMS' }
+  ];
+
+  var csvContent = "StudentID,ClassYear,Major,Handedness,StudyGroup,CaffeineIntake,MoodRating,SleepHours,ScreenTimeHours,ExtraversionScore,ReactionTimeMS\n" +
+"S001,Senior,Psychology,Right,Group C,Moderate,4,6.5,1.7,30.1,481\n" +
+"S002,Junior,Psychology,Right,Group C,Moderate,1,6.7,7.2,37.0,367\n" +
+"S003,Senior,Psychology,Right,Group A,Low,1,6.5,5.2,35.2,439\n" +
+"S004,Junior,Neuroscience,Right,Group C,Moderate,1,7.0,6.0,26.7,398\n" +
+"S005,First-year,Psychology,Right,Group A,Moderate,5,8.4,3.5,43.2,404\n" +
+"S006,Senior,Psychology,Right,Group B,Moderate,1,4.0,6.0,57.5,430\n" +
+"S007,Senior,Psychology,Right,Group B,None,3,6.5,6.4,47.2,454\n" +
+"S008,Senior,Psychology,Right,Group A,None,3,7.0,4.9,52.0,401\n" +
+"S009,First-year,Psychology,Right,Group A,High,3,7.1,4.9,60.9,479\n" +
+"S010,Junior,Psychology,Right,Group C,Low,4,6.4,5.0,63.3,357\n" +
+"S011,Sophomore,Psychology,Right,Group B,Low,5,4.9,2.9,49.3,420\n" +
+"S012,Senior,Psychology,Left,Group B,Low,2,7.2,4.2,63.5,563\n" +
+"S013,Junior,Neuroscience,Right,Group B,Moderate,5,8.7,4.2,50.9,432\n" +
+"S014,Senior,Psychology,Right,Group B,High,2,5.1,5.2,41.6,499\n" +
+"S015,Junior,Psychology,Right,Group C,Low,5,7.8,6.3,44.1,425\n" +
+"S016,Sophomore,Psychology,Right,Group A,High,3,6.4,2.6,35.2,452\n" +
+"S017,Junior,Psychology,Left,Group C,None,4,6.7,4.3,41.1,417\n" +
+"S018,First-year,Psychology,Right,Group C,Moderate,5,5.6,7.2,46.4,411\n" +
+"S019,Senior,Psychology,Right,Group B,Moderate,4,6.4,3.2,58.0,377\n" +
+"S020,Junior,Neuroscience,Right,Group A,None,5,8.2,3.0,67.2,444\n" +
+"S021,Senior,Psychology,Right,Group A,None,3,7.4,4.9,36.2,373\n" +
+"S022,Sophomore,Psychology,Right,Group C,Low,1,8.7,6.0,53.9,457\n" +
+"S023,Senior,Neuroscience,Left,Group C,High,3,8.1,4.5,39.6,480\n" +
+"S024,Senior,Psychology,Right,Group A,Moderate,1,7.3,6.9,54.7,440\n" +
+"S025,Senior,Psychology,Right,Group A,High,5,8.7,6.0,48.7,404\n" +
+"S026,Sophomore,Psychology,Right,Group A,Moderate,2,7.3,6.0,31.7,445\n" +
+"S027,Junior,Neuroscience,Right,Group A,Low,2,7.7,5.5,59.3,403\n" +
+"S028,First-year,Psychology,Right,Group C,Moderate,2,6.5,8.7,43.9,471\n" +
+"S029,Sophomore,Psychology,Right,Group C,None,4,6.9,4.1,44.7,319\n" +
+"S030,Junior,Psychology,Right,Group A,None,3,6.0,0.9,39.3,402\n" +
+"S031,Senior,Psychology,Right,Group C,Moderate,5,7.9,7.4,43.5,311\n" +
+"S032,Senior,Psychology,Left,Group A,Moderate,3,5.5,3.7,54.3,338\n" +
+"S033,Sophomore,Psychology,Right,Group B,Low,2,7.7,4.7,48.1,495\n" +
+"S034,Sophomore,Psychology,Right,Group B,Moderate,1,6.6,6.9,53.3,469\n" +
+"S035,Junior,Psychology,Right,Group C,Moderate,1,8.1,1.6,53.6,380\n" +
+"S036,Sophomore,Psychology,Right,Group C,High,2,7.6,2.2,63.2,337\n" +
+"S037,First-year,Psychology,Right,Group A,Moderate,5,8.8,1.6,46.6,257\n" +
+"S038,Junior,Psychology,Right,Group A,Low,3,7.6,3.1,35.2,390\n" +
+"S039,Sophomore,Psychology,Right,Group A,Low,5,5.1,5.3,60.7,553\n" +
+"S040,Junior,Undeclared,Right,Group A,Low,1,6.7,5.4,46.7,444\n" +
+"S041,Junior,Undeclared,Right,Group C,Moderate,1,5.5,5.0,61.1,389\n" +
+"S042,Senior,Psychology,Left,Group C,High,5,6.2,2.0,53.8,446\n" +
+"S043,Senior,Psychology,Right,Group A,Low,1,8.5,0.5,48.7,334\n" +
+"S044,Sophomore,Undeclared,Right,Group C,Low,1,7.5,4.6,53.5,404\n" +
+"S045,Senior,Neuroscience,Right,Group B,Low,3,6.0,3.7,69.5,425\n" +
+"S046,Senior,Neuroscience,Right,Group B,Moderate,5,5.7,5.3,70.8,415\n" +
+"S047,Sophomore,Psychology,Right,Group B,Moderate,4,6.8,5.8,50.7,463\n" +
+"S048,Sophomore,Psychology,Right,Group A,None,1,5.5,4.7,51.6,439\n" +
+"S049,Junior,Psychology,Right,Group C,None,5,6.1,5.9,60.8,457\n" +
+"S050,First-year,Undeclared,Left,Group A,Moderate,5,7.1,4.9,41.5,382\n" +
+"S051,Sophomore,Psychology,Right,Group A,None,5,8.1,5.5,53.3,469\n" +
+"S052,First-year,Psychology,Right,Group A,Moderate,5,7.5,3.2,49.7,510\n" +
+"S053,Senior,Psychology,Right,Group A,Low,2,4.3,4.2,53.1,367\n" +
+"S054,Junior,Psychology,Left,Group A,None,5,7.1,4.9,41.7,371\n" +
+"S055,Senior,Psychology,Right,Group A,High,2,6.9,6.0,34.1,493\n" +
+"S056,Senior,Neuroscience,Right,Group C,Low,5,7.3,3.8,29.3,409\n" +
+"S057,Junior,Neuroscience,Right,Group C,Low,3,8.6,5.4,38.8,497\n" +
+"S058,Junior,Neuroscience,Ambidextrous,Group A,Low,4,4.5,4.0,45.4,396\n" +
+"S059,First-year,Psychology,Left,Group A,None,4,6.1,4.3,47.1,500\n" +
+"S060,First-year,Psychology,Right,Group B,None,4,7.4,6.0,69.4,427\n";
+
+  /* ---------- Download CSV ---------- */
+  document.getElementById('downloadCsvBtn').addEventListener('click', function () {
+    var blob = new Blob([csvContent], { type: 'text/csv' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'intro_jamovi_data.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  /* ---------- Build variable table ---------- */
+  var vtableBody = document.querySelector('#varTable tbody');
+  variables.forEach(function (v, i) {
+    var tr = document.createElement('tr');
+
+    var tdName = document.createElement('td');
+    tdName.className = 'varname';
+    tdName.textContent = v.name;
+    tr.appendChild(tdName);
+
+    var tdType = document.createElement('td');
+    var select = document.createElement('select');
+    select.id = 'vtype_' + i;
+    ['-- choose --', 'Nominal', 'Ordinal', 'Continuous', 'ID'].forEach(function (opt) {
+      var o = document.createElement('option');
+      o.value = opt === '-- choose --' ? '' : opt;
+      o.textContent = opt;
+      select.appendChild(o);
+    });
+    tdType.appendChild(select);
+    tr.appendChild(tdType);
+
+    var tdRight = document.createElement('td');
+    var selectRight = document.createElement('select');
+    selectRight.id = 'vright_' + i;
+    ['-- choose --', 'Yes', 'No', 'Not sure'].forEach(function (opt) {
+      var o = document.createElement('option');
+      o.value = opt === '-- choose --' ? '' : opt;
+      o.textContent = opt;
+      selectRight.appendChild(o);
+    });
+    tdRight.appendChild(selectRight);
+    tr.appendChild(tdRight);
+
+    var tdDesc = document.createElement('td');
+    var ta = document.createElement('textarea');
+    ta.id = 'vdesc_' + i;
+    ta.placeholder = 'What does ' + v.name + ' represent?';
+    tdDesc.appendChild(ta);
+    tr.appendChild(tdDesc);
+
+    vtableBody.appendChild(tr);
+  });
+
+  /* ---------- Part 4: tabs activity ---------- */
+  var slots = Array.prototype.slice.call(document.querySelectorAll('.tab-slot'));
+  var tabStatus = document.getElementById('tabStatus');
+  var infoCards = Array.prototype.slice.call(document.querySelectorAll('.info-card'));
+
+  function normalize(s) { return (s || '').trim().toLowerCase(); }
+
+  document.getElementById('revealTabsBtn').addEventListener('click', function () {
+    var correctCount = 0;
+    slots.forEach(function (slot) {
+      var input = slot.querySelector('input');
+      var answer = slot.getAttribute('data-answer');
+      var tag = slot.querySelector('.answer-tag');
+      var isCorrect = normalize(input.value) === normalize(answer);
+      if (isCorrect) correctCount++;
+      slot.classList.add('revealed');
+      slot.classList.toggle('correct', isCorrect);
+      slot.classList.toggle('incorrect', !isCorrect);
+      tag.textContent = isCorrect ? 'Correct!' : ('Correct answer: ' + answer);
+    });
+    tabStatus.textContent = correctCount === slots.length
+      ? 'All four correct! See below for what each tab does.'
+      : correctCount + ' of ' + slots.length + ' correct. See below for what each tab does.';
+    tabStatus.className = correctCount === slots.length ? 'good' : 'partial';
+    infoCards.forEach(function (card, i) {
+      setTimeout(function () { card.classList.add('show'); }, i * 90);
+    });
+    saveState();
+  });
+
+  document.getElementById('resetTabsBtn').addEventListener('click', function () {
+    slots.forEach(function (slot) {
+      var input = slot.querySelector('input');
+      var tag = slot.querySelector('.answer-tag');
+      slot.classList.remove('revealed', 'correct', 'incorrect');
+      input.value = '';
+      tag.textContent = '';
+    });
+    tabStatus.textContent = '';
+    tabStatus.className = '';
+    infoCards.forEach(function (card) { card.classList.remove('show'); });
+    saveState();
+  });
+
+  /* ---------- Part 5: row/column check ---------- */
+  var countStatus = document.getElementById('countStatus');
+  document.getElementById('checkCountBtn').addEventListener('click', function () {
+    var rowVal = parseInt(document.getElementById('rowCount').value, 10);
+    var colVal = parseInt(document.getElementById('colCount').value, 10);
+    var rowOk = rowVal === 60;
+    var colOk = colVal === 11;
+    var row = document.getElementById('countRow');
+    row.classList.toggle('correct', rowOk && colOk);
+    row.classList.toggle('incorrect', !(rowOk && colOk));
+    if (rowOk && colOk) {
+      countStatus.textContent = 'Correct! 60 participants, 11 variables.';
+      countStatus.className = 'good';
+    } else {
+      var msg = [];
+      if (!rowOk) msg.push('row count');
+      if (!colOk) msg.push('column count');
+      countStatus.textContent = 'Check your ' + msg.join(' and ') + ' again in jamovi\u2019s Variables view.';
+      countStatus.className = 'partial';
+    }
+    saveState();
+  });
+
+  /* ---------- Save / restore progress ---------- */
+  var allFieldIds = ['studentName', 'rowCount', 'colCount', 'countExplain', 'q10', 'tab1', 'tab2', 'tab3', 'tab4'];
+  variables.forEach(function (v, i) {
+    allFieldIds.push('vtype_' + i, 'vright_' + i, 'vdesc_' + i);
+  });
+
+  function saveState() {
+    var data = {};
+    allFieldIds.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) data[id] = el.value;
+    });
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      document.getElementById('saveBanner').textContent = 'Saved in this browser at ' + new Date().toLocaleTimeString() + '.';
+    } catch (e) { /* storage unavailable; fail silently */ }
+  }
+
+  function restoreState() {
+    var raw;
+    try { raw = localStorage.getItem(STORAGE_KEY); } catch (e) { raw = null; }
+    if (!raw) return;
+    var data;
+    try { data = JSON.parse(raw); } catch (e) { return; }
+    allFieldIds.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el && data[id] !== undefined) el.value = data[id];
+    });
+  }
+
+  allFieldIds.forEach(function (id) {
+    var el = document.getElementById(id);
+    if (el) el.addEventListener('input', debounce(saveState, 400));
+  });
+
+  function debounce(fn, wait) {
+    var t;
+    return function () {
+      clearTimeout(t);
+      t = setTimeout(fn, wait);
+    };
+  }
+
+  document.getElementById('clearAllBtn').addEventListener('click', function () {
+    if (!confirm('Clear all saved answers on this page? This cannot be undone.')) return;
+    try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+    allFieldIds.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    document.getElementById('exportOut').value = '';
+    document.getElementById('saveBanner').textContent = 'Cleared.';
+  });
+
+  restoreState();
+
+  /* ---------- Export ---------- */
+  function val(id) {
+    var el = document.getElementById(id);
+    return el ? (el.value || '').trim() : '';
+  }
+
+  function buildExportText() {
+    var lines = [];
+    lines.push('Jamovi Tutorial \u2014 answers');
+    lines.push('Name: ' + (val('studentName') || '(not entered)'));
+    lines.push('=========================================');
+    lines.push('');
+    lines.push('Q8. Tabs across the top of the jamovi window (left to right):');
+    lines.push('  ' + [val('tab1'), val('tab2'), val('tab3'), val('tab4')].join(', '));
+    lines.push('');
+    lines.push('Q9. Rows and columns:');
+    lines.push('  Rows: ' + val('rowCount') + '   Columns: ' + val('colCount'));
+    lines.push('  Explanation: ' + val('countExplain'));
+    lines.push('');
+    lines.push('Variable table:');
+    variables.forEach(function (v, i) {
+      lines.push('  - ' + v.name + ' | Measure type: ' + val('vtype_' + i) + ' | Right type? ' + val('vright_' + i));
+      lines.push('    Represents: ' + val('vdesc_' + i));
+    });
+    lines.push('');
+    lines.push('Q10. What was confusing:');
+    lines.push('  ' + val('q10'));
+    return lines.join('\n');
+  }
+
+  function filenameSafeName() {
+    var n = val('studentName');
+    if (!n) return 'student';
+    return n.trim().replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_-]/g, '');
+  }
+
+  document.getElementById('buildExportBtn').addEventListener('click', function () {
+    document.getElementById('exportOut').value = buildExportText();
+  });
+
+  document.getElementById('copyExportBtn').addEventListener('click', function () {
+    var out = document.getElementById('exportOut');
+    if (!out.value) out.value = buildExportText();
+    out.select();
+    try {
+      document.execCommand('copy');
+    } catch (e) {}
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(out.value).catch(function () {});
+    }
+  });
+
+  document.getElementById('downloadExportBtn').addEventListener('click', function () {
+    var text = buildExportText();
+    document.getElementById('exportOut').value = text;
+    var blob = new Blob([text], { type: 'text/plain' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = filenameSafeName() + '_jamovi_tutorial_answers.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+})();
+</script>
+</body>
+</html>
