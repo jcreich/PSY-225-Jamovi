@@ -174,13 +174,17 @@
     .info-strip{grid-template-columns:1fr; text-align:center;}
   }
   .info-strip .photo{
-    width:180px; height:180px;
+    width:240px; height:240px;
     border-radius:50%;
     overflow:hidden;
     border:4px solid var(--sand);
     box-shadow:0 0 0 1px var(--line);
     flex-shrink:0;
     margin:0 auto;
+    -webkit-backface-visibility:hidden;
+    backface-visibility:hidden;
+    transform:translateZ(0);
+    -webkit-transform:translateZ(0);
   }
   .info-strip .photo img{
     width:100%; height:100%;
@@ -266,7 +270,7 @@
 
   <div class="info-strip">
     <div class="photo">
-      <img src="jessica-reich.jpg" alt="Portrait of Dr. Jessica C. Reich">
+      <img src="jessica-reich-square.jpg" alt="Portrait of Dr. Jessica C. Reich">
     </div>
     <div class="contact-block">
       <h3>Jessica C. Reich, Ph.D.</h3>
