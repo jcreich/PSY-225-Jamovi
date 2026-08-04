@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PSY 225 — Introductory Statistics for the Behavioral Sciences</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --teal-deep:   #0B3D3A;
+    --teal:        #135C52;
+    --teal-bright: #1E8A73;
+    --sand:        #F6F2E9;
+    --paper:       #FFFDF8;
+    --ink:         #1D2321;
+    --ink-soft:    #4B5450;
+    --gold:        #C79A3E;
+    --line:        #DCD5C4;
+    --rule:        #C9C1AC;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--sand);
+    color:var(--ink);
+    font-family:'Public Sans', system-ui, sans-serif;
+    font-size:16px;
+    line-height:1.6;
+  }
+  h1,h2,h3{
+    font-family:'Source Serif 4', Georgia, serif;
+    color:var(--teal-deep);
+    margin:0 0 .4em 0;
+  }
+  a{color:var(--teal-bright);}
+  .mono{font-family:'IBM Plex Mono', monospace; letter-spacing:.02em;}
+
+  /* ---------- Masthead ---------- */
+  .masthead{
+    background:
+      radial-gradient(1200px 400px at 15% -20%, rgba(199,154,62,.18), transparent 60%),
+      linear-gradient(160deg, var(--teal-deep) 0%, var(--teal) 68%, #14655a 100%);
+    color:var(--paper);
+    padding:56px 32px 40px;
+    position:relative;
+    overflow:hidden;
+  }
+  .masthead::after{
+    content:"";
+    position:absolute; inset:auto -10% -60% auto;
+    width:640px; height:640px;
+    background:radial-gradient(circle, rgba(255,255,255,.05), transparent 70%);
+  }
+  .masthead-inner{max-width:1180px; margin:0 auto; position:relative; z-index:1;}
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.78rem;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:#CFE7DF;
+    margin-bottom:14px;
+  }
+  .masthead h1{
+    color:var(--paper);
+    font-size:clamp(1.9rem, 4vw, 3.1rem);
+    font-weight:700;
+    line-height:1.08;
+    max-width:16ch;
+  }
+  .masthead .sub{
+    color:#DCEEE8;
+    font-size:1.08rem;
+    max-width:56ch;
+    margin-top:10px;
+  }
+  .badge-row{display:flex; flex-wrap:wrap; gap:10px; margin-top:26px;}
+  .badge{
+    border:1px solid rgba(255,255,255,.35);
+    background:rgba(255,255,255,.06);
+    padding:7px 14px;
+    border-radius:999px;
+    font-size:.85rem;
+    color:#EAF4F0;
+  }
+  .badge b{color:#fff;}
+
+  /* ---------- Layout ---------- */
+  .layout{
+    max-width:1180px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:230px 1fr;
+    gap:44px;
+    padding:44px 32px 100px;
+    align-items:start;
+  }
+  nav.toc{
+    position:sticky; top:24px;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:20px 18px;
+  }
+  nav.toc .toc-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.72rem;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin-bottom:10px;
+    display:block;
+  }
+  nav.toc a{
+    display:block;
+    color:var(--ink-soft);
+    text-decoration:none;
+    font-size:.92rem;
+    padding:6px 0;
+    border-bottom:1px dashed transparent;
+  }
+  nav.toc a:hover{color:var(--teal-deep); border-bottom-color:var(--rule);}
+
+  main{min-width:0;}
+  section{margin-bottom:52px; scroll-margin-top:24px;}
+  .kicker{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.72rem;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--teal-bright);
+    margin-bottom:6px;
+  }
+  section h2{font-size:1.55rem; border-bottom:2px solid var(--rule); padding-bottom:10px;}
+  section h3{font-size:1.1rem; color:var(--teal); margin-top:22px;}
+  p{margin:0 0 12px 0;}
+
+  .card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:22px 26px;
+    margin-top:16px;
+  }
+  .grid-2{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  @media(max-width:640px){.grid-2{grid-template-columns:1fr;}}
+
+  .info-list{list-style:none; margin:0; padding:0;}
+  .info-list li{
+    display:flex; gap:10px; padding:6px 0;
+    border-bottom:1px solid var(--line);
+    font-size:.95rem;
+  }
+  .info-list li:last-child{border-bottom:none;}
+  .info-list .k{color:var(--ink-soft); min-width:118px; font-weight:600;}
+
+  table{width:100%; border-collapse:collapse; margin-top:8px;}
+  th,td{text-align:left; padding:10px 12px; font-size:.95rem;}
+  thead th{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.72rem; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--teal-deep);
+    border-bottom:2px solid var(--rule);
+  }
+  tbody tr{border-bottom:1px solid var(--line);}
+  tbody tr:last-child{border-bottom:none;}
+  td.num, th.num{text-align:right; font-family:'IBM Plex Mono', monospace;}
+  tfoot td{font-weight:700; border-top:2px solid var(--teal-deep); padding-top:12px;}
+
+  /* stacked bar */
+  .stackbar{
+    display:flex; width:100%; height:34px;
+    border-radius:8px; overflow:hidden;
+    margin:18px 0 10px;
+    box-shadow:inset 0 0 0 1px var(--line);
+  }
+  .stackbar span{height:100%;}
+  .legend{display:flex; flex-wrap:wrap; gap:14px; font-size:.85rem; color:var(--ink-soft);}
+  .legend .dot{display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:6px; vertical-align:middle;}
+
+  .grade-scale{display:grid; grid-template-columns:repeat(4,1fr); gap:10px;}
+  @media(max-width:760px){.grade-scale{grid-template-columns:repeat(2,1fr);}}
+  .grade-cell{
+    background:var(--sand); border:1px solid var(--line); border-radius:10px;
+    padding:10px 12px; text-align:center;
+  }
+  .grade-cell .g{font-family:'Source Serif 4',serif; font-weight:700; color:var(--teal-deep); font-size:1.15rem;}
+  .grade-cell .r{font-size:.8rem; color:var(--ink-soft); font-family:'IBM Plex Mono',monospace;}
+
+  .policy{
+    border-left:3px solid var(--rule);
+    padding:4px 0 4px 18px;
+    margin-bottom:20px;
+  }
+  .policy.flag{border-left-color:var(--gold);}
+  .policy h3{margin-top:0;}
+  .callout{
+    background:#FBF3DE;
+    border:1px solid #E6D4A0;
+    border-radius:10px;
+    padding:14px 18px;
+    font-size:.92rem;
+    margin-top:10px;
+  }
+  .callout.teal{background:#E9F3EF; border-color:#BFE0D4;}
+
+  .dates-list{list-style:none; margin:0; padding:0;}
+  .dates-list li{
+    display:grid; grid-template-columns:200px 1fr; gap:14px;
+    padding:9px 0; border-bottom:1px solid var(--line); font-size:.95rem;
+  }
+  .dates-list li:last-child{border-bottom:none;}
+  .dates-list .d{font-family:'IBM Plex Mono', monospace; color:var(--teal-deep); font-weight:500;}
+
+  footer{
+    text-align:center; padding:28px 32px 50px;
+    color:var(--ink-soft); font-size:.85rem;
+  }
+
+  @media(max-width:900px){
+    .layout{grid-template-columns:1fr;}
+    nav.toc{position:static; display:flex; flex-wrap:wrap; gap:4px 16px;}
+    nav.toc a{padding:4px 0;}
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="eyebrow">PSY 225‑003 &amp; PSY 225‑007 · Spring 2026</div>
+    <h1>Introductory Statistics for the Behavioral Sciences</h1>
+    <p class="sub">University of North Carolina Wilmington — a semester of turning data into evidence, by hand and in Jamovi.</p>
+    <div class="badge-row">
+      <span class="badge"><b>Instructor</b> Jessica C. Reich, Ph.D.</span>
+      <span class="badge"><b>Office</b> TL 3006</span>
+      <span class="badge"><b>Office Hours</b> Tue &amp; Thu, 12:30–2:00 pm</span>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+
+  <nav class="toc">
+    <span class="toc-label">On this page</span>
+    <a href="#contact">Contact &amp; Communication</a>
+    <a href="#materials">Text &amp; Technology</a>
+    <a href="#overview">Course Overview</a>
+    <a href="#outcomes">Learning Outcomes</a>
+    <a href="#format">Course Format</a>
+    <a href="#evaluation">Evaluation &amp; Grading</a>
+    <a href="#policies">Class Policies</a>
+    <a href="#dates">Important Dates</a>
+  </nav>
+
+  <main>
+
+    <section id="contact">
+      <div class="kicker">Who to contact</div>
+      <h2>Contact &amp; Communication</h2>
+      <div class="card grid-2">
+        <div>
+          <h3 style="margin-top:0;">Instructor</h3>
+          <ul class="info-list">
+            <li><span class="k">Name</span><span>Jessica C. Reich, Ph.D.</span></li>
+            <li><span class="k">Office</span><span>TL 3006</span></li>
+            <li><span class="k">Email</span><span><a href="mailto:reichj@uncw.edu">reichj@uncw.edu</a></span></li>
+            <li><span class="k">Office Hours</span><span>Tuesdays &amp; Thursdays, 12:30–2:00 pm</span></li>
+          </ul>
+        </div>
+        <div>
+          <h3 style="margin-top:0;">Teaching Assistant</h3>
+          <ul class="info-list">
+            <li><span class="k">Name</span><span>TBA</span></li>
+            <li><span class="k">Office</span><span>TBA</span></li>
+            <li><span class="k">Email</span><span>TBA</span></li>
+            <li><span class="k">Office Hours</span><span>TBA</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="callout teal">
+        <b>Response times:</b> expect a reply within 24–48 hours on weekday submissions (Monday–Thursday), and within 72 hours for anything sent over the weekend (Friday–Sunday). Always include <b>“PSY 225”</b> in your subject line — messages without it may be missed or flagged as spam.
+      </div>
+    </section>
+
+    <section id="materials">
+      <div class="kicker">What you'll need</div>
+      <h2>Required Text &amp; Technology</h2>
+
+      <div class="card">
+        <h3 style="margin-top:0;">Required Text — free &amp; open access</h3>
+        <p>There is no textbook to purchase. We read directly from an open-access, peer-reviewed text:</p>
+        <p style="font-size:.93rem; color:var(--ink-soft);">Cote, L. R., Gordon, R., Randell, C. E., Schmitt, J. &amp; Marvin, H. (2021). <em>Introduction to statistics in the psychological sciences.</em> Open Educational Resources Collection, 25. Available at <a href="https://irl.umsl.edu/oer/25" target="_blank" rel="noopener">irl.umsl.edu/oer/25</a></p>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <h3 style="margin-top:0;">Technology Checklist</h3>
+        <ul class="info-list">
+          <li><span class="k">Calculator</span><span>A basic calculator is required. A stable internet connection, computer, webcam, and microphone are also needed in case of a shift to online instruction.</span></li>
+          <li><span class="k">Canvas</span><span>All materials and major assignments are posted here — log in with your UNCW credentials.</span></li>
+          <li><span class="k">Zoom</span><span>Used for virtual office hours and in case of a pivot to online instruction.</span></li>
+          <li><span class="k">Jamovi</span><span>Free, open-source statistical software — install it on your personal computer before the first lab (instructions on Canvas).</span></li>
+          <li><span class="k">Word / Office 365</span><span>Free through UNCW's Office 365 access for writing up homework.</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="overview">
+      <div class="kicker">The big picture</div>
+      <h2>Course Overview</h2>
+      <div class="card">
+        <h3 style="margin-top:0;">Catalogue Description</h3>
+        <p>An introduction to the statistical techniques most often used by behavioral scientists for descriptive purposes and hypothesis testing. Parametric techniques are emphasized, with nonparametric tests included.</p>
+        <p style="font-size:.9rem; color:var(--ink-soft);"><b>Prerequisites:</b> PSY 105 and MAT 111 (or a higher-level MAT course). Majors only, or permission of the instructor.</p>
+
+        <h3>Class Objectives</h3>
+        <p>This course builds a working foundation in the statistical practices most used in the behavioral sciences, covering descriptive and inferential statistics for univariate designs. The broader aim is to let you practice thinking like a psychologist — someone who relies on data to understand how people think, feel, and behave. By the end of the semester, you should be able to:</p>
+        <ul>
+          <li>Appreciate the importance and everyday uses of statistics</li>
+          <li>Understand the logic and fundamentals of hypothesis testing</li>
+          <li>Perform basic statistical analyses, by hand and with software</li>
+          <li>Make inferences and evaluate statistics in both research and daily life</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="outcomes">
+      <div class="kicker">What you'll walk away with</div>
+      <h2>Learning Outcomes &amp; Program Objectives</h2>
+      <div class="card">
+        <ul>
+          <li>Understand basic statistical concepts such as null hypothesis significance testing and effect size.</li>
+          <li>Identify the appropriate statistical analysis for a research question or dataset, and apply it.</li>
+          <li>Communicate and interpret statistical findings clearly, in writing and orally, using APA style.</li>
+          <li>Identify common statistical missteps and critically evaluate analyses used by others.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="format">
+      <div class="kicker">How class time works</div>
+      <h2>Course Format</h2>
+      <div class="card">
+        <p>Learning happens through reading, lecture, in-class activities, and homework. Lecture sessions introduce new content paired with an in-class activity; lab sessions revisit that material and teach you to run the analyses in Jamovi, with time built in for activities and homework.</p>
+        <p><b>It doesn't matter whether you read the text before or after class — just that you read it.</b></p>
+        <div class="callout">This course is built around understanding, not memorization: assignments happen in small groups, and <b>every exam is open-note.</b> Both the instructor and TA are available outside class during office hours and by appointment.</div>
+      </div>
+    </section>
+
+    <section id="evaluation">
+      <div class="kicker">Where your grade comes from</div>
+      <h2>Evaluation &amp; Grading</h2>
+
+      <div class="card">
+        <h3 style="margin-top:0;">Points Breakdown — 840 total</h3>
+        <div class="stackbar">
+          <span style="width:23.8%; background:#1E8A73;" title="Lecture Activities — 200 pts"></span>
+          <span style="width:14.3%; background:#C79A3E;" title="Lab Activities — 120 pts"></span>
+          <span style="width:11.9%; background:#0B3D3A;" title="Homework — 100 pts"></span>
+          <span style="width:10.7%; background:#7BAF9E;" title="Quizzes — 90 pts"></span>
+          <span style="width:7.1%;  background:#D9C48A;" title="Research Results Workshops — 60 pts"></span>
+          <span style="width:2.4%;  background:#4B5450;" title="Class Participation — 20 pts"></span>
+          <span style="width:29.8%; background:#135C52;" title="Exams — 250 pts"></span>
+        </div>
+        <div class="legend">
+          <span><span class="dot" style="background:#1E8A73;"></span>Lecture Act. (200)</span>
+          <span><span class="dot" style="background:#C79A3E;"></span>Lab Act. (120)</span>
+          <span><span class="dot" style="background:#0B3D3A;"></span>Homework (100)</span>
+          <span><span class="dot" style="background:#7BAF9E;"></span>Quizzes (90)</span>
+          <span><span class="dot" style="background:#D9C48A;"></span>RRWs (60)</span>
+          <span><span class="dot" style="background:#4B5450;"></span>Participation (20)</span>
+          <span><span class="dot" style="background:#135C52;"></span>Exams (250)</span>
+        </div>
+
+        <table>
+          <thead>
+            <tr><th>Component</th><th class="num">Structure</th><th class="num">Points</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Class Participation</td><td class="num">Daily attendance &amp; engagement</td><td class="num">20</td></tr>
+            <tr><td>Homework</td><td class="num">5 assignments · lowest dropped · 25 pts each</td><td class="num">100</td></tr>
+            <tr><td>Quizzes</td><td class="num">7 quizzes · lowest dropped · 15 pts each</td><td class="num">90</td></tr>
+            <tr><td>Lecture Activities</td><td class="num">Graded on completion · 10 pts each</td><td class="num">200</td></tr>
+            <tr><td>Lab Activities</td><td class="num">6 activities · 20 pts each</td><td class="num">120</td></tr>
+            <tr><td>Research Results Workshops</td><td class="num">6 workshops · 10 pts each</td><td class="num">60</td></tr>
+            <tr><td>Exams</td><td class="num">5 exams · open-note · 50 pts each</td><td class="num">250</td></tr>
+          </tbody>
+          <tfoot>
+            <tr><td>Total</td><td></td><td class="num">840</td></tr>
+          </tfoot>
+        </table>
+
+        <div class="callout" style="margin-top:18px;">
+          <b>Notes on individual components:</b>
+          <ul style="margin:8px 0 0 0;">
+            <li><b>Participation</b> — using your phone, sleeping, or other off-task behavior earns a zero for the day, even if you're physically present.</li>
+            <li><b>Homework</b> — collaboration on problems is welcome, but write-ups and answers must be your own.</li>
+            <li><b>Quizzes</b> — closed-book, individual, multiple-choice; some include extra credit.</li>
+            <li><b>Lab Activities</b> — one may be missed without penalty; a perfect attendance record earns <b>+2 extra credit points</b>.</li>
+            <li><b>Research Results Workshops</b> — one may be missed without penalty; a perfect record also earns <b>+2 extra credit points</b>.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px;">
+        <h3 style="margin-top:0;">Final Grade Scale (out of 840)</h3>
+        <p style="font-size:.88rem; color:var(--ink-soft);">Percentage cut-offs are converted to point totals and rounded to the nearest whole number.</p>
+        <div class="grade-scale">
+          <div class="grade-cell"><div class="g">A</div><div class="r">777+</div></div>
+          <div class="grade-cell"><div class="g">A−</div><div class="r">752–776</div></div>
+          <div class="grade-cell"><div class="g">B+</div><div class="r">727–751</div></div>
+          <div class="grade-cell"><div class="g">B</div><div class="r">701–726</div></div>
+          <div class="grade-cell"><div class="g">B−</div><div class="r">668–700</div></div>
+          <div class="grade-cell"><div class="g">C+</div><div class="r">643–667</div></div>
+          <div class="grade-cell"><div class="g">C</div><div class="r">618–642</div></div>
+          <div class="grade-cell"><div class="g">C−</div><div class="r">584–617</div></div>
+          <div class="grade-cell"><div class="g">D+</div><div class="r">550–583</div></div>
+          <div class="grade-cell"><div class="g">D</div><div class="r">533–549</div></div>
+          <div class="grade-cell"><div class="g">D−</div><div class="r">500–532</div></div>
+          <div class="grade-cell"><div class="g">F</div><div class="r">below 499</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="policies">
+      <div class="kicker">Ground rules for the semester</div>
+      <h2>Class Policies</h2>
+
+      <div class="policy flag">
+        <h3>This document is a contract</h3>
+        <p>This syllabus describes the course, your responsibilities, and how you'll be evaluated — treat it as a contract between instructor and student. Registering beyond the add/drop deadline (<b>January 20th</b>) is an implied agreement to the terms stated here.</p>
+      </div>
+
+      <div class="policy">
+        <h3>Copyright Use &amp; Ownership</h3>
+        <p>Lecture slides, recordings, handouts, and exam copies are the instructor's intellectual property under UNCW's Copyright Use and Ownership Policy. Redistributing them — including posting to websites — without permission is prohibited and may constitute infringement.</p>
+      </div>
+
+      <div class="policy">
+        <h3>Attendance</h3>
+        <p>Attendance and participation are required. You're responsible for everything covered in class, whether or not you attend — arrange notes from a classmate if you must miss a session.</p>
+      </div>
+
+      <div class="policy flag">
+        <h3>Late Work — In-Class Activities &amp; Labs Only</h3>
+        <p>This policy does <b>not</b> apply to homework, which incurs a 50% penalty if late. In-class activities and labs are due at the end of the period assigned, but may be turned in up to one class period later for full credit. After that grace window, late work loses 50%. Everything must be submitted by the end of the unit in which it was assigned (i.e., by the unit exam or the last day of class) — after that, it scores zero.</p>
+        <p style="font-size:.9rem;">Absent the day something is assigned? Email the instructor as soon as possible to request a copy so you can complete it during your absence.</p>
+      </div>
+
+      <div class="policy">
+        <h3>Missed Quizzes &amp; Exams</h3>
+        <p>To arrange a make-up, email the instructor <b>within 24 hours</b> of the missed assessment. Make-ups must be completed within one week of the original date unless other arrangements are approved in advance — otherwise the score is zero. If you know in advance you'll be absent, notify the instructor ahead of time.</p>
+      </div>
+
+      <div class="policy">
+        <h3>COVID-19</h3>
+        <p>COVID-19 is treated like the flu or any other illness — no special accommodation is guaranteed. Please don't come to class while symptomatic, and follow any active UNCW mandates. If unvaccinated, consider consulting your healthcare provider; the Student Health Center (910‑962‑3280) can answer questions about testing and exposure.</p>
+      </div>
+
+      <div class="policy">
+        <h3>Cell Phones</h3>
+        <p>Silence phones before class, and step outside if you must take a call. Texting or otherwise using a phone during class is not permitted.</p>
+      </div>
+
+      <div class="policy">
+        <h3>Email Etiquette</h3>
+        <p>Check email daily for announcements. Include <b>“PSY 225”</b> in your subject line, open with a greeting, state your purpose clearly, and sign your name (no ALL CAPS). Work is not accepted via email — if you must send something, use Word or PDF format, or paste short text directly into the message.</p>
+      </div>
+
+      <div class="policy">
+        <h3>Technical Problems</h3>
+        <p>Contact TAC at <b>910‑962‑HELP (4357)</b>, <a href="mailto:tac@uncw.edu">tac@uncw.edu</a>, or through the <a href="https://uncw.teamdynamix.com/TDClient/1875/Portal/Home/" target="_blank" rel="noopener">TeamDynamix portal</a>.</p>
+      </div>
+
+      <div class="policy flag">
+        <h3>Academic Integrity</h3>
+        <p>All students are held to the UNCW Honor Code. Academic dishonesty — including plagiarism, exam collusion, or sharing exam content — is treated as fraud and can result in a zero, course failure, or expulsion. Cell phones and laptops (other than approved calculators) aren't permitted during exams.</p>
+      </div>
+
+      <div class="policy flag">
+        <h3>Artificial Intelligence (AI) Use</h3>
+        <p>AI tools are <b>not permitted</b> in this course unless you submit a written explanation of how the tool will specifically support your learning, and receive the instructor's approval <b>before</b> using it in coursework. Acceptable uses tend to involve clarifying concepts or interpreting statistical results — not replacing your own problem-solving. Unapproved or excessive AI use is treated as an academic integrity violation.</p>
+      </div>
+
+      <div class="policy">
+        <h3>Students with Disabilities</h3>
+        <p>Contact the Disability Resource Center (910‑962‑7555 or <a href="mailto:drc@uncw.edu">drc@uncw.edu</a>) and share your accommodation letter with the instructor. For test-taking accommodations, the referral letter is needed at least three days before the test.</p>
+      </div>
+
+      <div class="policy">
+        <h3>Non-Discrimination &amp; Classroom Etiquette</h3>
+        <p>Everyone in the room deserves respect and tolerance regardless of religion, age, disability, ethnicity, race, gender, marital status, or sexual orientation. Discrimination in any of these areas — or related to national origin, citizenship, political affiliation, and more — will not be permitted.</p>
+      </div>
+
+      <div class="policy">
+        <h3>Campus Respect Compact</h3>
+        <p>UNCW's Respect Compact affirms a shared commitment to mutual respect across campus; details are available at the <a href="https://uncw.edu/about/know-us/respect-compact" target="_blank" rel="noopener">Respect Compact page</a>.</p>
+      </div>
+
+      <div class="policy">
+        <h3>Violence &amp; Harassment</h3>
+        <p>UNCW has zero tolerance for violent or harassing behavior. In an emergency, contact police at 911 or UNCW CARE at (910) 962‑2273. University employees are required to report alleged sexual misconduct to the Dean of Students; CARE, the Counseling Center, and Abrons Student Health Center are confidential exceptions.</p>
+      </div>
+
+      <div class="policy">
+        <h3>Religious Observance</h3>
+        <p>State law and UNCW policy guarantee a minimum of two excused absences per academic year for required religious observances. Submit written notice within the first two weeks of class, and register the absence with the Registrar through SeaNet.</p>
+      </div>
+
+      <div class="policy">
+        <h3>Land Acknowledgement</h3>
+        <p>UNCW sits on the traditional territory of the Catawba People and has long served as a meeting ground for many Indigenous peoples, including the Coharie, Lumbee, Meherrin, Occaneechi Saponi, Haliwa Saponi, Waccamaw Siouan, Sappony, and the Eastern Band of Cherokee, over more than 12,000 years.</p>
+      </div>
+
+      <div class="policy">
+        <h3>Statement on Wilmington 1898</h3>
+        <p>In 1898, an estimated 60–300 unarmed Black residents of Wilmington were killed by white supremacists in a planned coup following a legal election, part of a broader campaign that drove Black political participation in the city and state into a long decline. Many who fled never returned. As members of the UNCW and Wilmington community, acknowledging this history is part of understanding our present. For further reading, see David Zucchino's <em>Wilmington's Lie</em>.</p>
+      </div>
+    </section>
+
+    <section id="dates">
+      <div class="kicker">Mark your calendar</div>
+      <h2>Important Dates</h2>
+      <div class="card">
+        <ul class="dates-list">
+          <li><span class="d">January 12</span><span>First day of classes</span></li>
+          <li><span class="d">January 19</span><span>University holiday — MLK Jr. Day</span></li>
+          <li><span class="d">January 20</span><span>Last day to add/drop</span></li>
+          <li><span class="d">March 2 – 8</span><span>Spring break</span></li>
+          <li><span class="d">March 18</span><span>Last day to withdraw with a “W”</span></li>
+          <li><span class="d">April 2 – 4</span><span>University holiday — Easter / Good Friday</span></li>
+          <li><span class="d">April 28</span><span>Thursday classes meet (swap day)</span></li>
+          <li><span class="d">April 29</span><span>Last day of classes / Friday classes meet (swap day)</span></li>
+          <li><span class="d">April 30</span><span>Reading day</span></li>
+          <li><span class="d">May 1 – 7</span><span>Final exams</span></li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  PSY 225 · Introductory Statistics for the Behavioral Sciences · Spring 2026 · University of North Carolina Wilmington
+</footer>
+
+</body>
+</html>
