@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PSY 225 — Welcome</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --teal-deep:   #0B3D3A;
+    --teal:        #135C52;
+    --teal-bright: #1E8A73;
+    --sand:        #F6F2E9;
+    --paper:       #FFFDF8;
+    --ink:         #1D2321;
+    --ink-soft:    #4B5450;
+    --gold:        #C79A3E;
+    --line:        #DCD5C4;
+    --rule:        #C9C1AC;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--sand);
+    color:var(--ink);
+    font-family:'Public Sans', system-ui, sans-serif;
+    font-size:16px;
+    line-height:1.6;
+  }
+  h1,h2,h3{
+    font-family:'Source Serif 4', Georgia, serif;
+    color:var(--teal-deep);
+    margin:0 0 .4em 0;
+  }
+  a{color:var(--teal-bright);}
+  .mono{font-family:'IBM Plex Mono', monospace; letter-spacing:.02em;}
+
+  /* ---------- Masthead ---------- */
+  .masthead{
+    background:
+      radial-gradient(1200px 400px at 15% -20%, rgba(199,154,62,.18), transparent 60%),
+      linear-gradient(160deg, var(--teal-deep) 0%, var(--teal) 68%, #14655a 100%);
+    color:var(--paper);
+    padding:60px 32px 46px;
+    position:relative;
+    overflow:hidden;
+    text-align:center;
+  }
+  .masthead::after{
+    content:"";
+    position:absolute; inset:auto -10% -60% auto;
+    width:640px; height:640px;
+    background:radial-gradient(circle, rgba(255,255,255,.05), transparent 70%);
+  }
+  .masthead-inner{max-width:760px; margin:0 auto; position:relative; z-index:1;}
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.78rem;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:#CFE7DF;
+    margin-bottom:14px;
+  }
+  .masthead h1{
+    color:var(--paper);
+    font-size:clamp(2rem, 5vw, 3rem);
+    font-weight:700;
+    line-height:1.1;
+  }
+  .masthead .sub{
+    color:#DCEEE8;
+    font-size:1.1rem;
+    max-width:52ch;
+    margin:10px auto 0;
+  }
+
+  /* ---------- Layout ---------- */
+  .layout{
+    max-width:900px;
+    margin:0 auto;
+    padding:0 32px 100px;
+  }
+
+  .illustration-card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:28px;
+    margin-top:-36px;
+    position:relative;
+    z-index:2;
+    text-align:center;
+  }
+  .illustration-card img{
+    max-width:100%;
+    height:auto;
+    border-radius:8px;
+  }
+  .illustration-card .caption{
+    font-size:.92rem;
+    color:var(--ink-soft);
+    font-style:italic;
+    margin-top:14px;
+  }
+
+  .welcome{
+    margin-top:44px;
+    text-align:center;
+  }
+  .welcome h2{font-size:1.5rem;}
+  .welcome p{
+    max-width:62ch;
+    margin:0 auto 14px;
+    font-size:1.02rem;
+  }
+
+  .quicklinks{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:16px;
+    margin-top:48px;
+  }
+  @media(max-width:700px){.quicklinks{grid-template-columns:1fr;}}
+  .qcard{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:22px 20px;
+    text-decoration:none;
+    display:block;
+    transition:border-color .15s ease, transform .15s ease;
+  }
+  .qcard:hover{border-color:var(--teal-bright); transform:translateY(-2px);}
+  .qcard .qc-eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.7rem;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin-bottom:8px;
+  }
+  .qcard h3{
+    font-size:1.1rem;
+    color:var(--teal-deep);
+    margin:0 0 6px;
+  }
+  .qcard p{
+    font-size:.88rem;
+    color:var(--ink-soft);
+    margin:0;
+  }
+  .qcard .arrow{
+    display:inline-block;
+    margin-top:12px;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.82rem;
+    color:var(--teal-bright);
+  }
+
+  .info-strip{
+    margin-top:48px;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:26px;
+    display:grid;
+    grid-template-columns:auto 1fr;
+    gap:26px;
+    align-items:start;
+  }
+  @media(max-width:600px){
+    .info-strip{grid-template-columns:1fr; text-align:center;}
+  }
+  .info-strip .photo{
+    width:120px; height:120px;
+    border-radius:50%;
+    overflow:hidden;
+    border:3px solid var(--sand);
+    box-shadow:0 0 0 1px var(--line);
+    flex-shrink:0;
+    margin:0 auto;
+  }
+  .info-strip .photo img{
+    width:100%; height:100%;
+    object-fit:cover;
+    display:block;
+  }
+  .info-strip .contact-block{min-width:0;}
+  .info-strip h3{font-size:1rem; margin-bottom:2px;}
+  .info-strip .role{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.78rem;
+    color:var(--ink-soft);
+    margin-bottom:14px;
+    display:block;
+  }
+  .info-strip .group-label{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.72rem;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--gold);
+    margin:18px 0 6px;
+  }
+  .info-strip .group-label:first-of-type{margin-top:0;}
+  .info-list{list-style:none; margin:0; padding:0;}
+  .info-list li{
+    display:flex; gap:10px; padding:7px 0;
+    border-bottom:1px solid var(--line);
+    font-size:.95rem;
+  }
+  @media(max-width:600px){.info-list li{justify-content:center;}}
+  .info-list li:last-child{border-bottom:none;}
+  .info-list .k{color:var(--ink-soft); min-width:130px; font-weight:600;}
+
+  footer{
+    text-align:center; padding:32px 32px 50px;
+    color:var(--ink-soft); font-size:.85rem;
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="eyebrow">PSY 225‑005 · Fall 2026</div>
+    <h1>Welcome to Introductory Statistics for the Behavioral Sciences</h1>
+    <p class="sub">A semester of turning data into evidence — by hand, and in Jamovi.</p>
+  </div>
+</header>
+
+<div class="layout">
+
+  <div class="illustration-card">
+    <img src="welcome-illustration.png" alt="Two overlapping bell curves, drawn with smiley faces at their peaks, holding hands and asking: In the whole scheme of things, are we really so different?">
+    <p class="caption">A preview of what's ahead: distributions, means, and the surprising ways they overlap.</p>
+  </div>
+
+  <div class="welcome">
+    <h2>Hi, and welcome!</h2>
+    <p>This course is built around understanding, not memorization — you'll spend the semester learning to read, calculate, and question statistics the way a working psychologist would. Everything you need to get started lives below.</p>
+  </div>
+
+  <div class="quicklinks">
+    <a class="qcard" href="syllabus.html">
+      <div class="qc-eyebrow">Start here</div>
+      <h3>Course Information</h3>
+      <p>Grading, policies, required materials, and important dates for the semester.</p>
+      <span class="arrow">View course information →</span>
+    </a>
+    <a class="qcard" href="schedule.html">
+      <div class="qc-eyebrow">Week by week</div>
+      <h3>Course Schedule</h3>
+      <p>A unit-by-unit overview with links to each week's readings and activities.</p>
+      <span class="arrow">View schedule →</span>
+    </a>
+    <a class="qcard" href="formulas.html">
+      <div class="qc-eyebrow">Study tool</div>
+      <h3>Formula &amp; Symbols Reference</h3>
+      <p>Every symbol and equation from lecture, with a built-in quiz mode.</p>
+      <span class="arrow">View reference →</span>
+    </a>
+  </div>
+
+  <div class="info-strip">
+    <div class="photo">
+      <img src="jessica-reich.jpg" alt="Portrait of Dr. Jessica C. Reich">
+    </div>
+    <div class="contact-block">
+      <h3>Jessica C. Reich, Ph.D.</h3>
+      <span class="role">Instructor</span>
+      <ul class="info-list">
+        <li><span class="k">Email</span><span><a href="mailto:reichj@uncw.edu">reichj@uncw.edu</a></span></li>
+        <li><span class="k">Office</span><span>TL 3014</span></li>
+        <li><span class="k">Office Hours</span><span>TBA</span></li>
+        <li><span class="k">Response time</span><span>24–48 hrs on weekdays, 72 hrs over the weekend</span></li>
+      </ul>
+
+      <div class="group-label">Teaching Assistant</div>
+      <ul class="info-list">
+        <li><span class="k">Name</span><span>TBA</span></li>
+        <li><span class="k">Email</span><span>TBA</span></li>
+        <li><span class="k">Office</span><span>TBA</span></li>
+        <li><span class="k">Office Hours</span><span>TBA</span></li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  PSY 225 · Fall 2026 · University of North Carolina Wilmington
+</footer>
+
+</body>
+</html>
