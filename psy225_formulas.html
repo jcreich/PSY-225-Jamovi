@@ -198,6 +198,90 @@
     margin-top:8px;
   }
 
+  /* ---------- Quiz mode ---------- */
+  .quiz-bar{
+    display:flex;
+    align-items:center;
+    gap:14px;
+    flex-wrap:wrap;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:14px 20px;
+    margin-bottom:32px;
+  }
+  .quiz-toggle{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    cursor:pointer;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.85rem;
+    color:var(--teal-deep);
+    font-weight:600;
+    user-select:none;
+  }
+  .switch{
+    position:relative;
+    width:42px; height:24px;
+    background:var(--rule);
+    border-radius:999px;
+    transition:background .15s ease;
+    flex-shrink:0;
+  }
+  .switch::after{
+    content:"";
+    position:absolute;
+    top:3px; left:3px;
+    width:18px; height:18px;
+    background:#fff;
+    border-radius:50%;
+    transition:transform .15s ease;
+    box-shadow:0 1px 2px rgba(0,0,0,.25);
+  }
+  body.quiz-mode .switch{background:var(--teal-bright);}
+  body.quiz-mode .switch::after{transform:translateX(18px);}
+  .quiz-toggle input{position:absolute; opacity:0; width:0; height:0;}
+
+  .quiz-actions{display:none; gap:10px; flex-wrap:wrap;}
+  body.quiz-mode .quiz-actions{display:flex;}
+  .quiz-btn{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.8rem;
+    padding:7px 14px;
+    border-radius:8px;
+    border:1px solid var(--teal-bright);
+    background:transparent;
+    color:var(--teal-bright);
+    cursor:pointer;
+  }
+  .quiz-btn:hover{background:var(--teal-bright); color:#fff;}
+  .quiz-hint{
+    font-size:.85rem;
+    color:var(--ink-soft);
+    margin-left:auto;
+  }
+  body.quiz-mode .quiz-hint{display:none;}
+  @media(max-width:640px){.quiz-hint{display:none;}}
+
+  .reveal-btn{
+    display:none;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.8rem;
+    padding:7px 16px;
+    border-radius:8px;
+    border:1px dashed var(--rule);
+    background:#F1EEE4;
+    color:var(--ink-soft);
+    cursor:pointer;
+  }
+  .reveal-btn:hover{border-color:var(--teal-bright); color:var(--teal-deep);}
+  body.quiz-mode td.sym .reveal-btn{display:inline-block;}
+  body.quiz-mode td.sym.revealed .reveal-btn{display:none;}
+  body.quiz-mode td.sym .answer-content{display:none;}
+  body.quiz-mode td.sym.revealed .answer-content{display:block; cursor:pointer;}
+  body.quiz-mode td.sym.revealed .answer-content:hover{opacity:.7;}
+
   footer{
     text-align:center; padding:28px 32px 50px;
     color:var(--ink-soft); font-size:.85rem;
@@ -215,7 +299,7 @@
 
 <header class="masthead">
   <div class="masthead-inner">
-    <a class="crumb" href="psy225_schedule.html">← Course Schedule Overview</a>
+    <a class="crumb" href="schedule.html">← Course Schedule Overview</a>
     <div class="eyebrow">PSY 225‑005 · Fall 2026</div>
     <h1>Formula &amp; Symbols Reference</h1>
     <p class="sub">Every symbol and equation from lecture, organized by test type — bookmark this and use it alongside your notes on exams.</p>
@@ -236,6 +320,19 @@
 
   <main>
 
+    <div class="quiz-bar">
+      <label class="quiz-toggle">
+        <input type="checkbox" id="quizModeToggle" onchange="toggleQuizMode(this)">
+        <span class="switch"></span>
+        Quiz mode
+      </label>
+      <div class="quiz-actions">
+        <button class="quiz-btn" type="button" onclick="revealAll()">Reveal all</button>
+        <button class="quiz-btn" type="button" onclick="hideAll()">Hide all</button>
+      </div>
+      <span class="quiz-hint">Turn this on to hide the formulas and quiz yourself — click a card to reveal it.</span>
+    </div>
+
     <section id="basic">
       <div class="kicker">Where everything starts</div>
       <h2>Basic Notation</h2>
@@ -243,14 +340,14 @@
         <table class="formula-table">
           <thead><tr><th>Concept</th><th class="sym-col">Symbol</th></tr></thead>
           <tbody>
-            <tr><td>A single score</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/X?scale=1" alt="X"></td></tr>
-            <tr><td>Population mean</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/%255Cmu?scale=1" alt="mu"></td></tr>
-            <tr><td>Sample mean</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/%255Coverline%257BX%257D?scale=1" alt="X-bar"> or <img src="https://uncw.instructure.com/equation_images/M?scale=1" alt="M"></td></tr>
-            <tr><td>Sum of squares</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/SS?scale=1" alt="SS"></td></tr>
-            <tr><td>Population variance</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/%255Csigma%255E2?scale=1" alt="sigma squared"></td></tr>
-            <tr><td>Sample variance</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/s%255E2?scale=1" alt="s squared"></td></tr>
-            <tr><td>Population standard deviation</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/%255Csigma?scale=1" alt="sigma"></td></tr>
-            <tr><td>Sample standard deviation</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/SD?scale=1" alt="SD"> or <img src="https://uncw.instructure.com/equation_images/s?scale=1" alt="s"></td></tr>
+            <tr><td>A single score</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/X?scale=1" alt="X"></div></td></tr>
+            <tr><td>Population mean</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/%255Cmu?scale=1" alt="mu"></div></td></tr>
+            <tr><td>Sample mean</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/%255Coverline%257BX%257D?scale=1" alt="X-bar"> or <img src="https://uncw.instructure.com/equation_images/M?scale=1" alt="M"></div></td></tr>
+            <tr><td>Sum of squares</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/SS?scale=1" alt="SS"></div></td></tr>
+            <tr><td>Population variance</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/%255Csigma%255E2?scale=1" alt="sigma squared"></div></td></tr>
+            <tr><td>Sample variance</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/s%255E2?scale=1" alt="s squared"></div></td></tr>
+            <tr><td>Population standard deviation</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/%255Csigma?scale=1" alt="sigma"></div></td></tr>
+            <tr><td>Sample standard deviation</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/SD?scale=1" alt="SD"> or <img src="https://uncw.instructure.com/equation_images/s?scale=1" alt="s"></div></td></tr>
           </tbody>
         </table>
       </div>
@@ -263,19 +360,19 @@
         <table class="formula-table">
           <thead><tr><th>Concept</th><th class="sym-col">Formula</th></tr></thead>
           <tbody>
-            <tr><td>Distribution of means mean</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/%255Cmu_M?scale=1" alt="mu sub M"></td></tr>
-            <tr><td>Distribution of means variance</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/%255Csigma_M%255E2%253D%255Cfrac%257B%255Csigma%255E2%257D%257Bn%257D?scale=1" alt="sigma-M squared = sigma squared over n"></td></tr>
-            <tr><td>Distribution of means standard deviation (standard error)</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/SE%253D%255Csigma_M%253D%255Cfrac%257B%255Csigma%257D%257B%255Csqrt%257Bn%257D%257D?scale=1" alt="SE = sigma-M = sigma over sqrt n"></td></tr>
-            <tr><td>Probability (<em>p</em>-value)</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/p?scale=1" alt="p"></td></tr>
-            <tr><td>A single score turned into a z-score</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/z%253D%255Cfrac%257B%255Cleft(X-X_%257Bbar%257D%255Cright)%257D%257BSD%257D?scale=1" alt="z = (X - X-bar) / SD"></td></tr>
-            <tr><td>A sample mean turned into a z-score (observed z, or z<sub>obs</sub>)</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/z%253D%255Cfrac%257B%255Cleft(X_%257Bbar%257D-%255Cmu_M%255Cright)%257D%257B%255Csigma_M%257D?scale=1" alt="z = (X-bar - mu-M) / sigma-M"></td></tr>
-            <tr><td>Critical z score</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/z_%257Bcrit%257D?scale=1" alt="z crit"></td></tr>
-            <tr><td>Significance level <span class="note">(also the probability of making a Type I error)</span></td><td class="sym"><img src="https://uncw.instructure.com/equation_images/%255Calpha?scale=1" alt="alpha"></td></tr>
-            <tr><td>Probability of making a Type II error</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/%255Cbeta?scale=1" alt="beta"></td></tr>
-            <tr><td>Power</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/1-%255Cbeta?scale=1" alt="1 minus beta"></td></tr>
-            <tr><td>Standardized mean difference (Cohen's <em>d</em>) for a one-sample z-test</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/d%253D%255Cfrac%257BX_%257Bbar%257D-%255Cmu%257D%257B%255Csigma%257D?scale=1" alt="d = (X-bar - mu) / sigma"></td></tr>
-            <tr><td>Margin of error <span class="note">(when working with z scores)</span></td><td class="sym"><img src="https://uncw.instructure.com/equation_images/margin%2520of%2520error%253Dz_%257Bcrit%257D%255Ctimes%2520SE?scale=1" alt="margin of error = z crit times SE"></td></tr>
-            <tr><td>Confidence interval <span class="note">(when working with z scores)</span></td><td class="sym"><img src="https://uncw.instructure.com/equation_images/CI%253DX_%257Bbar%257D%255Cpm%2520marginoferror?scale=1" alt="CI = X-bar plus or minus margin of error"></td></tr>
+            <tr><td>Distribution of means mean</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/%255Cmu_M?scale=1" alt="mu sub M"></div></td></tr>
+            <tr><td>Distribution of means variance</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/%255Csigma_M%255E2%253D%255Cfrac%257B%255Csigma%255E2%257D%257Bn%257D?scale=1" alt="sigma-M squared = sigma squared over n"></div></td></tr>
+            <tr><td>Distribution of means standard deviation (standard error)</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/SE%253D%255Csigma_M%253D%255Cfrac%257B%255Csigma%257D%257B%255Csqrt%257Bn%257D%257D?scale=1" alt="SE = sigma-M = sigma over sqrt n"></div></td></tr>
+            <tr><td>Probability (<em>p</em>-value)</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/p?scale=1" alt="p"></div></td></tr>
+            <tr><td>A single score turned into a z-score</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/z%253D%255Cfrac%257B%255Cleft(X-X_%257Bbar%257D%255Cright)%257D%257BSD%257D?scale=1" alt="z = (X - X-bar) / SD"></div></td></tr>
+            <tr><td>A sample mean turned into a z-score (observed z, or z<sub>obs</sub>)</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/z%253D%255Cfrac%257B%255Cleft(X_%257Bbar%257D-%255Cmu_M%255Cright)%257D%257B%255Csigma_M%257D?scale=1" alt="z = (X-bar - mu-M) / sigma-M"></div></td></tr>
+            <tr><td>Critical z score</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/z_%257Bcrit%257D?scale=1" alt="z crit"></div></td></tr>
+            <tr><td>Significance level <span class="note">(also the probability of making a Type I error)</span></td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/%255Calpha?scale=1" alt="alpha"></div></td></tr>
+            <tr><td>Probability of making a Type II error</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/%255Cbeta?scale=1" alt="beta"></div></td></tr>
+            <tr><td>Power</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/1-%255Cbeta?scale=1" alt="1 minus beta"></div></td></tr>
+            <tr><td>Standardized mean difference (Cohen's <em>d</em>) for a one-sample z-test</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/d%253D%255Cfrac%257BX_%257Bbar%257D-%255Cmu%257D%257B%255Csigma%257D?scale=1" alt="d = (X-bar - mu) / sigma"></div></td></tr>
+            <tr><td>Margin of error <span class="note">(when working with z scores)</span></td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/margin%2520of%2520error%253Dz_%257Bcrit%257D%255Ctimes%2520SE?scale=1" alt="margin of error = z crit times SE"></div></td></tr>
+            <tr><td>Confidence interval <span class="note">(when working with z scores)</span></td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/CI%253DX_%257Bbar%257D%255Cpm%2520marginoferror?scale=1" alt="CI = X-bar plus or minus margin of error"></div></td></tr>
           </tbody>
         </table>
       </div>
@@ -288,12 +385,12 @@
         <table class="formula-table">
           <thead><tr><th>Concept</th><th class="sym-col">Formula</th></tr></thead>
           <tbody>
-            <tr><td>Estimated standard error</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/s_M%2520or%2520SE?scale=1" alt="s-M or SE"></td></tr>
-            <tr><td>Observed <em>t</em> statistic</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/t_%257Bobs%257D%253D%255Cfrac%257B%255Cleft(%255Coverline%257BX%257D-%255Cmu_M%255Cright)%257D%257Bs_M%257D?scale=1" alt="t-obs = (X-bar - mu-M) / s-M"></td></tr>
-            <tr><td>Degrees of freedom <span class="note">(one-sample and related-samples t-test)</span></td><td class="sym"><img src="https://uncw.instructure.com/equation_images/df%253Dn-1?scale=1" alt="df = n minus 1"></td></tr>
-            <tr><td>Standardized mean difference (Cohen's <em>d</em>) for a one-sample t-test</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/d%253D%255Cfrac%257B%255Cleft(%255Coverline%257BX%257D-%255Cmu%255Cright)%257D%257Bs%257D?scale=1" alt="d = (X-bar - mu) / s"></td></tr>
-            <tr><td>Margin of error <span class="note">(when working with t scores)</span></td><td class="sym"><img src="https://uncw.instructure.com/equation_images/marginoferror%253D%255Cleft(t_%257Bcrit%257D%255Cright)*(SE)?scale=1" alt="margin of error = t crit times SE"></td></tr>
-            <tr><td>Confidence interval</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/CI%253D%255Coverline%257BX%257D_%257B%257D%255Cpm%2520marginoferror?scale=1" alt="CI = X-bar plus or minus margin of error"></td></tr>
+            <tr><td>Estimated standard error</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/s_M%2520or%2520SE?scale=1" alt="s-M or SE"></div></td></tr>
+            <tr><td>Observed <em>t</em> statistic</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/t_%257Bobs%257D%253D%255Cfrac%257B%255Cleft(%255Coverline%257BX%257D-%255Cmu_M%255Cright)%257D%257Bs_M%257D?scale=1" alt="t-obs = (X-bar - mu-M) / s-M"></div></td></tr>
+            <tr><td>Degrees of freedom <span class="note">(one-sample and related-samples t-test)</span></td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/df%253Dn-1?scale=1" alt="df = n minus 1"></div></td></tr>
+            <tr><td>Standardized mean difference (Cohen's <em>d</em>) for a one-sample t-test</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/d%253D%255Cfrac%257B%255Cleft(%255Coverline%257BX%257D-%255Cmu%255Cright)%257D%257Bs%257D?scale=1" alt="d = (X-bar - mu) / s"></div></td></tr>
+            <tr><td>Margin of error <span class="note">(when working with t scores)</span></td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/marginoferror%253D%255Cleft(t_%257Bcrit%257D%255Cright)*(SE)?scale=1" alt="margin of error = t crit times SE"></div></td></tr>
+            <tr><td>Confidence interval</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/CI%253D%255Coverline%257BX%257D_%257B%257D%255Cpm%2520marginoferror?scale=1" alt="CI = X-bar plus or minus margin of error"></div></td></tr>
           </tbody>
         </table>
       </div>
@@ -306,15 +403,15 @@
         <table class="formula-table">
           <thead><tr><th>Concept</th><th class="sym-col">Formula</th></tr></thead>
           <tbody>
-            <tr><td>Difference score</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/X_%257BD%257D?scale=1" alt="X sub D"></td></tr>
-            <tr><td>Mean difference score</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/M_%257BD%257D%2520%253D%2520%255Cfrac%257B%255Csum_%257BX_%257BD%257D%257D%257D%257Bn%257D?scale=1" alt="M-D = sum of X-D over n"></td></tr>
-            <tr><td>Standard deviation of difference scores</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/s_%257BD%257D%2520%253D%2520%255Csqrt%257B%255Cfrac%257B%255Csum_%257B(X_%257BD%257D-M_%257BD%257D)%255E%257B2%257D%257D%255E%257B%257D%257D%257Bn-1%257D%257D%253D%255Csqrt%257B%255Cfrac%257BSS_%257BD%257D%257D%257Bn-1%257D%257D?scale=1" alt="s-D formula"></td></tr>
-            <tr><td>Center of the distribution of differences</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/%255Cmu_%257BMD%257D?scale=1" alt="mu sub MD"></td></tr>
-            <tr><td>Standard error</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/SE%2520%253D%2520%255Cfrac%257Bs_%257BD%257D%257D%257B%255Csqrt%257Bn%257D%257D?scale=1" alt="SE = s-D over sqrt n"></td></tr>
-            <tr><td>Population mean associated with the sample</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/%255Cmu_%257BD%257D?scale=1" alt="mu sub D"></td></tr>
-            <tr><td>Observed <em>t</em> statistic</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/t_%257Bobs%257D%2520%253D%2520%255Cfrac%257B(M_%257BD%257D-%255Cmu_%257BMD%257D)%257D%257BSE%257D?scale=1" alt="t-obs = (M-D minus mu-MD) over SE"></td></tr>
-            <tr><td>Standardized mean difference (Cohen's <em>d</em>)</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/d%2520%253D%2520%255Cfrac%257B(M_%257BD%257D-%255Cmu_%257BMD%257D)%257D%257Bs_%257BD%257D%257D?scale=1" alt="d = (M-D minus mu-MD) over s-D"></td></tr>
-            <tr><td>Confidence interval</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/CI%2520%253D%2520M_%257BD%257D%255Cpm%2520marginoferror?scale=1" alt="CI = M-D plus or minus margin of error"></td></tr>
+            <tr><td>Difference score</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/X_%257BD%257D?scale=1" alt="X sub D"></div></td></tr>
+            <tr><td>Mean difference score</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/M_%257BD%257D%2520%253D%2520%255Cfrac%257B%255Csum_%257BX_%257BD%257D%257D%257D%257Bn%257D?scale=1" alt="M-D = sum of X-D over n"></div></td></tr>
+            <tr><td>Standard deviation of difference scores</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/s_%257BD%257D%2520%253D%2520%255Csqrt%257B%255Cfrac%257B%255Csum_%257B(X_%257BD%257D-M_%257BD%257D)%255E%257B2%257D%257D%255E%257B%257D%257D%257Bn-1%257D%257D%253D%255Csqrt%257B%255Cfrac%257BSS_%257BD%257D%257D%257Bn-1%257D%257D?scale=1" alt="s-D formula"></div></td></tr>
+            <tr><td>Center of the distribution of differences</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/%255Cmu_%257BMD%257D?scale=1" alt="mu sub MD"></div></td></tr>
+            <tr><td>Standard error</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/SE%2520%253D%2520%255Cfrac%257Bs_%257BD%257D%257D%257B%255Csqrt%257Bn%257D%257D?scale=1" alt="SE = s-D over sqrt n"></div></td></tr>
+            <tr><td>Population mean associated with the sample</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/%255Cmu_%257BD%257D?scale=1" alt="mu sub D"></div></td></tr>
+            <tr><td>Observed <em>t</em> statistic</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/t_%257Bobs%257D%2520%253D%2520%255Cfrac%257B(M_%257BD%257D-%255Cmu_%257BMD%257D)%257D%257BSE%257D?scale=1" alt="t-obs = (M-D minus mu-MD) over SE"></div></td></tr>
+            <tr><td>Standardized mean difference (Cohen's <em>d</em>)</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/d%2520%253D%2520%255Cfrac%257B(M_%257BD%257D-%255Cmu_%257BMD%257D)%257D%257Bs_%257BD%257D%257D?scale=1" alt="d = (M-D minus mu-MD) over s-D"></div></td></tr>
+            <tr><td>Confidence interval</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/CI%2520%253D%2520M_%257BD%257D%255Cpm%2520marginoferror?scale=1" alt="CI = M-D plus or minus margin of error"></div></td></tr>
           </tbody>
         </table>
       </div>
@@ -327,14 +424,14 @@
         <table class="formula-table">
           <thead><tr><th>Concept</th><th class="sym-col">Formula</th></tr></thead>
           <tbody>
-            <tr><td>Group mean difference</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/M_%257B1%257D-M_%257B2%257D?scale=1" alt="M1 minus M2"></td></tr>
-            <tr><td>Degrees of freedom, total</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/df_%257BTotal%257D%2520%253D%2520df_%257B1%257D%252Bdf_%257B2%257D?scale=1" alt="df total = df1 plus df2"> OR <img src="https://uncw.instructure.com/equation_images/df_%257Btotal%257D%2520%253D%2520n_%257B1%257D%252Bn_%257B2%257D-2?scale=1" alt="df total = n1 plus n2 minus 2"></td></tr>
-            <tr><td>Pooled variance</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/s%255E%257B2%257D_%257Bpooled%257D%2520%253D%2520%255Cfrac%257Bdf_%257B1%257D%257D%257Bdf_%257Btotal%257D%257D%255Ctimes(s%255E%257B2%257D_%257B1%257D)%2520%252B%2520%255Cfrac%257Bdf_%257B2%257D%257D%257Bdf_%257Btotal%257D%257D%255Ctimes(s%255E%257B2%257D_%257B2%257D)%2520%253D%2520%255Cfrac%257BSS_%257B1%257D%252BSS_%257B2%257D%257D%257Bdf_%257Btotal%257D%257D?scale=1" alt="pooled variance formula"></td></tr>
-            <tr><td>Pooled standard deviation</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/s_%257Bpooled%257D%2520%253D%2520%255Csqrt%257Bs%255E%257B2%257D_%257Bpooled%257D%257D?scale=1" alt="pooled standard deviation"></td></tr>
-            <tr><td>Standard error</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/SE%2520%253D%2520%255Csqrt%257B(%255Cfrac%257Bs%255E%257B2%257D_%257Bpooled%257D%257D%257Bn_%257B1%257D%257D)%252B(%255Cfrac%257Bs%255E%257B2%257D_%257Bpooled%257D%257D%257Bn_%257B2%257D%257D)%257D?scale=1" alt="standard error formula"></td></tr>
-            <tr><td>Observed <em>t</em> statistic</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/t_%257Bobs%257D%2520%253D%2520%255Cfrac%257B(M_%257B1%257D-M_%257B2%257D)%257D%257BSE%257D?scale=1" alt="t-obs = (M1 minus M2) over SE"></td></tr>
-            <tr><td>Standardized mean difference (Cohen's <em>d</em>)</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/d%2520%253D%2520%255Cfrac%257B(M_%257B1%257D-M_%257B2%257D)%257D%257Bs_%257Bpooled%257D%257D?scale=1" alt="d = (M1 minus M2) over s pooled"></td></tr>
-            <tr><td>Confidence interval</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/CI%2520%253D%2520(M_%257B1%257D-M_%257B2%257D)%2520%255Cpm%2520marginoferror?scale=1" alt="CI = (M1 minus M2) plus or minus margin of error"></td></tr>
+            <tr><td>Group mean difference</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/M_%257B1%257D-M_%257B2%257D?scale=1" alt="M1 minus M2"></div></td></tr>
+            <tr><td>Degrees of freedom, total</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/df_%257BTotal%257D%2520%253D%2520df_%257B1%257D%252Bdf_%257B2%257D?scale=1" alt="df total = df1 plus df2"> OR <img src="https://uncw.instructure.com/equation_images/df_%257Btotal%257D%2520%253D%2520n_%257B1%257D%252Bn_%257B2%257D-2?scale=1" alt="df total = n1 plus n2 minus 2"></div></td></tr>
+            <tr><td>Pooled variance</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/s%255E%257B2%257D_%257Bpooled%257D%2520%253D%2520%255Cfrac%257Bdf_%257B1%257D%257D%257Bdf_%257Btotal%257D%257D%255Ctimes(s%255E%257B2%257D_%257B1%257D)%2520%252B%2520%255Cfrac%257Bdf_%257B2%257D%257D%257Bdf_%257Btotal%257D%257D%255Ctimes(s%255E%257B2%257D_%257B2%257D)%2520%253D%2520%255Cfrac%257BSS_%257B1%257D%252BSS_%257B2%257D%257D%257Bdf_%257Btotal%257D%257D?scale=1" alt="pooled variance formula"></div></td></tr>
+            <tr><td>Pooled standard deviation</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/s_%257Bpooled%257D%2520%253D%2520%255Csqrt%257Bs%255E%257B2%257D_%257Bpooled%257D%257D?scale=1" alt="pooled standard deviation"></div></td></tr>
+            <tr><td>Standard error</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/SE%2520%253D%2520%255Csqrt%257B(%255Cfrac%257Bs%255E%257B2%257D_%257Bpooled%257D%257D%257Bn_%257B1%257D%257D)%252B(%255Cfrac%257Bs%255E%257B2%257D_%257Bpooled%257D%257D%257Bn_%257B2%257D%257D)%257D?scale=1" alt="standard error formula"></div></td></tr>
+            <tr><td>Observed <em>t</em> statistic</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/t_%257Bobs%257D%2520%253D%2520%255Cfrac%257B(M_%257B1%257D-M_%257B2%257D)%257D%257BSE%257D?scale=1" alt="t-obs = (M1 minus M2) over SE"></div></td></tr>
+            <tr><td>Standardized mean difference (Cohen's <em>d</em>)</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/d%2520%253D%2520%255Cfrac%257B(M_%257B1%257D-M_%257B2%257D)%257D%257Bs_%257Bpooled%257D%257D?scale=1" alt="d = (M1 minus M2) over s pooled"></div></td></tr>
+            <tr><td>Confidence interval</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/CI%2520%253D%2520(M_%257B1%257D-M_%257B2%257D)%2520%255Cpm%2520marginoferror?scale=1" alt="CI = (M1 minus M2) plus or minus margin of error"></div></td></tr>
           </tbody>
         </table>
       </div>
@@ -347,42 +444,42 @@
         <table class="formula-table">
           <thead><tr><th>Concept</th><th class="sym-col">Formula</th></tr></thead>
           <tbody>
-            <tr><td>Between-groups variance <span class="note">(how much the group means vary from one another)</span></td><td class="sym"><img src="https://uncw.instructure.com/equation_images/MS_B%253D%255Cleft(S%255E2_M%255Cright)%255Cleft(n%255Cright)?scale=1.16666875" alt="MS-B = (S squared M)(n)"></td></tr>
-            <tr><td>Distribution of means variance</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/S%255E2_M%253D%255Cfrac%257B%255Csum_%257B%257D%255E%257B%257D%255Cleft(X_%257Bbar%257D-M_G%255Cright)%255E2%257D%257Bk-1%257D?scale=1.16666875" alt="S squared M formula"></td></tr>
-            <tr><td>Grand mean <span class="note">(the mean of the means)</span></td><td class="sym"><img src="https://uncw.instructure.com/equation_images/G_M%253D%255Cfrac%257B%255Csum_%257B%257D%255E%257B%257DX_%257Bbar%257D%257D%257Bk%257D?scale=1.16666875" alt="grand mean formula"></td></tr>
-            <tr><td>Number of groups/levels</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/k?scale=1.16666875" alt="k"></td></tr>
-            <tr><td>Group size <span class="note">(number of measurements in each group)</span></td><td class="sym"><img src="https://uncw.instructure.com/equation_images/n?scale=1.16666875" alt="n"></td></tr>
-            <tr><td>Sample size <span class="note">(number of measurements across the groups)</span></td><td class="sym"><img src="https://uncw.instructure.com/equation_images/N?scale=1.16666875" alt="N"></td></tr>
-            <tr><td>Within-groups variance <span class="note">(how much scores differ from the average within each group)</span></td><td class="sym"><img src="https://uncw.instructure.com/equation_images/MS_W%253D%255Cfrac%257B%255Csum%2520S%255E2%257D%257Bk%257D?scale=1.16666875" alt="MS-W formula"></td></tr>
-            <tr><td>F-ratio (F<sub>obs</sub>)</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/F_%257Bobs%257D%253D%255Cfrac%257BMS_B%257D%257BMS_W%257D?scale=1" alt="F-obs = MS-B over MS-W"></td></tr>
-            <tr><td>Between-groups degrees of freedom <span class="note">(numerator df)</span></td><td class="sym"><img src="https://uncw.instructure.com/equation_images/df_B%253Dk-1?scale=1" alt="df-B = k minus 1"></td></tr>
-            <tr><td>Within-groups degrees of freedom <span class="note">(denominator df)</span></td><td class="sym"><img src="https://uncw.instructure.com/equation_images/df_W%253D%255Csum_%257B%257D%255E%257B%257Ddf?scale=1" alt="df-W = sum of df"> OR <img src="https://uncw.instructure.com/equation_images/df_W%253DN-k?scale=1" alt="df-W = N minus k"></td></tr>
-            <tr><td>Eta-squared <span class="note">(proportion of variance in the DV explained by the IV)</span></td><td class="sym"><img src="https://uncw.instructure.com/equation_images/%255Ceta%255E2%253D%255Cfrac%257BSS_%257Beffect%257D%257D%257BSS_%257Btotal%257D%257D?scale=1" alt="eta squared formula"></td></tr>
-            <tr><td>Between-groups sum of squares</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/SS_%257Beffect%257D%253D(MS_B)%255Cleft(df_B%255Cright)?scale=1" alt="SS-effect = (MS-B)(df-B)"></td></tr>
-            <tr><td>Within-groups sum of squares</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/SS_%257BWithin%257D%253D%2520(MS_%257BW%257D)(df_%257BW%257D)?scale=1" alt="SS-within = (MS-W)(df-W)"></td></tr>
-            <tr><td>Total sum of squares</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/SS_%257Btotal%257D%2520%253D%2520SS_%257Beffect%257D%2520%252B%2520SS_%257BWithin%257D?scale=1" alt="SS-total = SS-effect plus SS-within"></td></tr>
+            <tr><td>Between-groups variance <span class="note">(how much the group means vary from one another)</span></td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/MS_B%253D%255Cleft(S%255E2_M%255Cright)%255Cleft(n%255Cright)?scale=1.16666875" alt="MS-B = (S squared M)(n)"></div></td></tr>
+            <tr><td>Distribution of means variance</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/S%255E2_M%253D%255Cfrac%257B%255Csum_%257B%257D%255E%257B%257D%255Cleft(X_%257Bbar%257D-M_G%255Cright)%255E2%257D%257Bk-1%257D?scale=1.16666875" alt="S squared M formula"></div></td></tr>
+            <tr><td>Grand mean <span class="note">(the mean of the means)</span></td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/G_M%253D%255Cfrac%257B%255Csum_%257B%257D%255E%257B%257DX_%257Bbar%257D%257D%257Bk%257D?scale=1.16666875" alt="grand mean formula"></div></td></tr>
+            <tr><td>Number of groups/levels</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/k?scale=1.16666875" alt="k"></div></td></tr>
+            <tr><td>Group size <span class="note">(number of measurements in each group)</span></td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/n?scale=1.16666875" alt="n"></div></td></tr>
+            <tr><td>Sample size <span class="note">(number of measurements across the groups)</span></td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/N?scale=1.16666875" alt="N"></div></td></tr>
+            <tr><td>Within-groups variance <span class="note">(how much scores differ from the average within each group)</span></td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/MS_W%253D%255Cfrac%257B%255Csum%2520S%255E2%257D%257Bk%257D?scale=1.16666875" alt="MS-W formula"></div></td></tr>
+            <tr><td>F-ratio (F<sub>obs</sub>)</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/F_%257Bobs%257D%253D%255Cfrac%257BMS_B%257D%257BMS_W%257D?scale=1" alt="F-obs = MS-B over MS-W"></div></td></tr>
+            <tr><td>Between-groups degrees of freedom <span class="note">(numerator df)</span></td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/df_B%253Dk-1?scale=1" alt="df-B = k minus 1"></div></td></tr>
+            <tr><td>Within-groups degrees of freedom <span class="note">(denominator df)</span></td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/df_W%253D%255Csum_%257B%257D%255E%257B%257Ddf?scale=1" alt="df-W = sum of df"> OR <img src="https://uncw.instructure.com/equation_images/df_W%253DN-k?scale=1" alt="df-W = N minus k"></div></td></tr>
+            <tr><td>Eta-squared <span class="note">(proportion of variance in the DV explained by the IV)</span></td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/%255Ceta%255E2%253D%255Cfrac%257BSS_%257Beffect%257D%257D%257BSS_%257Btotal%257D%257D?scale=1" alt="eta squared formula"></div></td></tr>
+            <tr><td>Between-groups sum of squares</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/SS_%257Beffect%257D%253D(MS_B)%255Cleft(df_B%255Cright)?scale=1" alt="SS-effect = (MS-B)(df-B)"></div></td></tr>
+            <tr><td>Within-groups sum of squares</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/SS_%257BWithin%257D%253D%2520(MS_%257BW%257D)(df_%257BW%257D)?scale=1" alt="SS-within = (MS-W)(df-W)"></div></td></tr>
+            <tr><td>Total sum of squares</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/SS_%257Btotal%257D%2520%253D%2520SS_%257Beffect%257D%2520%252B%2520SS_%257BWithin%257D?scale=1" alt="SS-total = SS-effect plus SS-within"></div></td></tr>
             <tr>
               <td>Tukey's F<sub>crit</sub> <span class="note">(post hoc comparisons)</span></td>
-              <td class="sym">
+              <td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content">
                 <div class="stack">
                   <img src="https://uncw.instructure.com/equation_images/Tukey's%2520F_%257Bcrit%257D%2520%253D%2520%255Cfrac%257Bq%255E%257B2%257D%257D%257B2%257D?scale=1" alt="Tukey's F-crit = q squared over 2">
                 </div>
                 <div class="sub-note"><strong>q-table:</strong> column = number of groups; row = within-groups degrees of freedom (df<sub>W</sub>)</div>
-              </td>
+              </div></td>
             </tr>
-            <tr><td>Bonferroni-adjusted significance level</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/Bonferroni-adjusted%2520%255Calpha%2520%253D%2520%255Cfrac%257B.05%257D%257BN_%257Bcomparisons%257D%257D?scale=1" alt="Bonferroni-adjusted alpha = .05 over N comparisons"></td></tr>
+            <tr><td>Bonferroni-adjusted significance level</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/Bonferroni-adjusted%2520%255Calpha%2520%253D%2520%255Cfrac%257B.05%257D%257BN_%257Bcomparisons%257D%257D?scale=1" alt="Bonferroni-adjusted alpha = .05 over N comparisons"></div></td></tr>
             <tr>
               <td>Between-groups variance for pairwise comparisons</td>
-              <td class="sym">
+              <td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content">
                 <div class="stack">
                   <img src="https://uncw.instructure.com/equation_images/G_M%253D%255Cfrac%257B%255Csum_%257B%257D%255E%257B%257DX_%257Bbar%257D%257D%257Bk%257D?scale=1.16666875" alt="grand mean formula (comparison means only)">
                   <img src="https://uncw.instructure.com/equation_images/S%255E2_M%253D%255Cfrac%257B%255Csum_%257B%257D%255E%257B%257D%255Cleft(X_%257Bbar%257D-M_G%255Cright)%255E2%257D%257Bk-1%257D?scale=1.16666875" alt="S squared M formula (comparison means only)">
                   <img src="https://uncw.instructure.com/equation_images/MS_B%253D%255Cleft(S%255E2_M%255Cright)%255Cleft(n%255Cright)?scale=1.16666875" alt="MS-B = (S squared M)(n)">
                 </div>
                 <div class="sub-note">Uses only the two means in the comparison — <span class="flag">note: k = 2 for pairwise comparisons</span></div>
-              </td>
+              </div></td>
             </tr>
-            <tr><td>F-ratio (F<sub>obs</sub>) for pairwise comparisons</td><td class="sym"><img src="https://uncw.instructure.com/equation_images/F_%257Bobs%257D%253D%255Cfrac%257BComparisonMS_B%257D%257BMS_WfromANOVA%257D?scale=1.16666875" alt="F-obs = comparison MS-B over MS-W from ANOVA"></td></tr>
+            <tr><td>F-ratio (F<sub>obs</sub>) for pairwise comparisons</td><td class="sym"><button class="reveal-btn" type="button" onclick="revealAnswer(this)">Show</button><div class="answer-content"><img src="https://uncw.instructure.com/equation_images/F_%257Bobs%257D%253D%255Cfrac%257BComparisonMS_B%257D%257BMS_WfromANOVA%257D?scale=1.16666875" alt="F-obs = comparison MS-B over MS-W from ANOVA"></div></td></tr>
           </tbody>
         </table>
       </div>
@@ -394,6 +491,43 @@
 <footer>
   PSY 225 · Formula &amp; Symbols Reference · Fall 2026 · University of North Carolina Wilmington
 </footer>
+
+<script>
+  function toggleQuizMode(checkbox) {
+    document.body.classList.toggle('quiz-mode', checkbox.checked);
+    if (!checkbox.checked) {
+      // reset all revealed state when leaving quiz mode, so it's fresh next time
+      document.querySelectorAll('td.sym.revealed').forEach(function(td){
+        td.classList.remove('revealed');
+      });
+    }
+  }
+
+  function revealAnswer(btn) {
+    var td = btn.closest('td.sym');
+    if (td) td.classList.add('revealed');
+  }
+
+  function revealAll() {
+    document.querySelectorAll('td.sym').forEach(function(td){
+      td.classList.add('revealed');
+    });
+  }
+
+  function hideAll() {
+    document.querySelectorAll('td.sym').forEach(function(td){
+      td.classList.remove('revealed');
+    });
+  }
+
+  // clicking a revealed answer hides it again, so you can re-quiz yourself
+  document.addEventListener('click', function(e){
+    var content = e.target.closest('td.sym.revealed .answer-content');
+    if (content) {
+      content.closest('td.sym').classList.remove('revealed');
+    }
+  });
+</script>
 
 </body>
 </html>
