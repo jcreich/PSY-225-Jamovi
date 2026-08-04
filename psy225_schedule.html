@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PSY 225 — Course Schedule Overview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --teal-deep:   #0B3D3A;
+    --teal:        #135C52;
+    --teal-bright: #1E8A73;
+    --sand:        #F6F2E9;
+    --paper:       #FFFDF8;
+    --ink:         #1D2321;
+    --ink-soft:    #4B5450;
+    --gold:        #C79A3E;
+    --line:        #DCD5C4;
+    --rule:        #C9C1AC;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--sand);
+    color:var(--ink);
+    font-family:'Public Sans', system-ui, sans-serif;
+    font-size:16px;
+    line-height:1.6;
+  }
+  h1,h2,h3{
+    font-family:'Source Serif 4', Georgia, serif;
+    color:var(--teal-deep);
+    margin:0 0 .4em 0;
+  }
+  a{color:var(--teal-bright);}
+  .mono{font-family:'IBM Plex Mono', monospace; letter-spacing:.02em;}
+
+  /* ---------- Masthead ---------- */
+  .masthead{
+    background:
+      radial-gradient(1200px 400px at 15% -20%, rgba(199,154,62,.18), transparent 60%),
+      linear-gradient(160deg, var(--teal-deep) 0%, var(--teal) 68%, #14655a 100%);
+    color:var(--paper);
+    padding:56px 32px 40px;
+    position:relative;
+    overflow:hidden;
+  }
+  .masthead::after{
+    content:"";
+    position:absolute; inset:auto -10% -60% auto;
+    width:640px; height:640px;
+    background:radial-gradient(circle, rgba(255,255,255,.05), transparent 70%);
+  }
+  .masthead-inner{max-width:980px; margin:0 auto; position:relative; z-index:1;}
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.78rem;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:#CFE7DF;
+    margin-bottom:14px;
+  }
+  .masthead h1{
+    color:var(--paper);
+    font-size:clamp(1.9rem, 4vw, 2.7rem);
+    font-weight:700;
+    line-height:1.1;
+    max-width:22ch;
+  }
+  .masthead .sub{
+    color:#DCEEE8;
+    font-size:1.05rem;
+    max-width:60ch;
+    margin-top:10px;
+  }
+
+  /* ---------- Layout ---------- */
+  .layout{
+    max-width:980px;
+    margin:0 auto;
+    padding:44px 32px 100px;
+  }
+
+  .unit{margin-bottom:44px;}
+  .unit-head{
+    display:flex; align-items:baseline; gap:14px;
+    border-bottom:2px solid var(--rule);
+    padding-bottom:10px;
+    margin-bottom:16px;
+  }
+  .unit-num{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.85rem;
+    color:var(--gold);
+    letter-spacing:.08em;
+  }
+  .unit-head h2{font-size:1.3rem; margin:0;}
+  .unit-span{
+    margin-left:auto;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.8rem;
+    color:var(--ink-soft);
+  }
+
+  .week-card{
+    display:grid;
+    grid-template-columns:120px 1fr auto;
+    gap:18px;
+    align-items:start;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:16px 20px;
+    margin-bottom:12px;
+  }
+  @media(max-width:640px){
+    .week-card{grid-template-columns:1fr; gap:8px;}
+    .week-card .wk-link{justify-self:start;}
+  }
+  .wk-meta{}
+  .wk-num{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.75rem;
+    color:var(--gold);
+    text-transform:uppercase;
+    letter-spacing:.06em;
+  }
+  .wk-dates{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.88rem;
+    color:var(--teal-deep);
+    font-weight:500;
+    margin-top:2px;
+  }
+  .wk-body h3{
+    font-size:1.02rem;
+    margin:0 0 6px 0;
+  }
+  .wk-body p{margin:0 0 6px 0; font-size:.92rem; color:var(--ink-soft);}
+  .wk-tags{display:flex; flex-wrap:wrap; gap:6px; margin-top:6px;}
+  .tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.72rem;
+    padding:3px 9px;
+    border-radius:999px;
+    border:1px solid var(--rule);
+    color:var(--teal-deep);
+    background:#EEF6F2;
+    white-space:nowrap;
+  }
+  .tag.exam{background:#FBEAEA; border-color:#E5C3C3; color:#8C2F2F;}
+  .tag.due{background:#FBF3DE; border-color:#E6D4A0; color:#8A6A1F;}
+  .tag.holiday{background:#EDEDED; border-color:#D6D6D6; color:#5B5B5B;}
+
+  .wk-link{
+    align-self:center;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.82rem;
+    text-decoration:none;
+    color:var(--teal-bright);
+    border:1px solid var(--teal-bright);
+    padding:7px 14px;
+    border-radius:8px;
+    white-space:nowrap;
+  }
+  .wk-link:hover{background:var(--teal-bright); color:#fff;}
+
+  .legend-note{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:16px 20px;
+    margin-bottom:36px;
+    font-size:.88rem;
+    color:var(--ink-soft);
+  }
+  .legend-note .tag{margin-right:4px;}
+
+  footer{
+    text-align:center; padding:28px 32px 50px;
+    color:var(--ink-soft); font-size:.85rem;
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="eyebrow">PSY 225‑005 · Fall 2026</div>
+    <h1>Course Schedule — Overview</h1>
+    <p class="sub">A week-by-week map of the semester. Each week links out to its own page with the full day-by-day breakdown, readings, and activities.</p>
+  </div>
+</header>
+
+<div class="layout">
+
+  <div class="legend-note">
+    <span class="tag exam">exam</span> exam or exam review &nbsp;·&nbsp;
+    <span class="tag due">due</span> homework or quiz due &nbsp;·&nbsp;
+    <span class="tag holiday">no class</span> university holiday or break
+  </div>
+
+  <div class="unit">
+    <div class="unit-head">
+      <span class="unit-num">Unit 1</span>
+      <h2>Descriptive Statistics</h2>
+      <span class="unit-span">Aug 19 – Sep 4</span>
+    </div>
+
+    <div class="week-card">
+      <div class="wk-meta"><div class="wk-num">Week 1</div><div class="wk-dates">Aug 19 – 21</div></div>
+      <div class="wk-body">
+        <h3>Welcome &amp; Basic Concepts in Statistics</h3>
+        <p>Syllabus review, variables &amp; measurement, visualizing data. Install Jamovi.</p>
+        <div class="wk-tags"><span class="tag due">HW #1 assigned</span></div>
+      </div>
+      <a class="wk-link" href="week-01.html">Week 1 →</a>
+    </div>
+
+    <div class="week-card">
+      <div class="wk-meta"><div class="wk-num">Week 2</div><div class="wk-dates">Aug 24 – 28</div></div>
+      <div class="wk-body">
+        <h3>Central Tendency &amp; Variability</h3>
+        <p>Calculating mean/median/mode and variability by hand, then in Jamovi (Lab 1).</p>
+        <div class="wk-tags"></div>
+      </div>
+      <a class="wk-link" href="week-02.html">Week 2 →</a>
+    </div>
+
+    <div class="week-card">
+      <div class="wk-meta"><div class="wk-num">Week 3</div><div class="wk-dates">Aug 31 – Sep 4</div></div>
+      <div class="wk-body">
+        <h3>Descriptive Statistics Wrap-Up &amp; Exam 1</h3>
+        <p>Quiz 1, Research Results Workshop 1, exam review, and Exam 1.</p>
+        <div class="wk-tags"><span class="tag due">HW #1 due</span><span class="tag due">Quiz #1</span><span class="tag exam">Exam #1</span></div>
+      </div>
+      <a class="wk-link" href="week-03.html">Week 3 →</a>
+    </div>
+  </div>
+
+  <div class="unit">
+    <div class="unit-head">
+      <span class="unit-num">Unit 2</span>
+      <h2>Distributions &amp; Hypothesis Testing</h2>
+      <span class="unit-span">Sep 7 – Sep 25</span>
+    </div>
+
+    <div class="week-card">
+      <div class="wk-meta"><div class="wk-num">Week 4</div><div class="wk-dates">Sep 7 – 11</div></div>
+      <div class="wk-body">
+        <h3>The Normal Distribution &amp; z-scores</h3>
+        <p>No class Monday (Labor Day). Populations, samples, probability; Lab 2 in Jamovi.</p>
+        <div class="wk-tags"><span class="tag holiday">Sep 7 no class</span><span class="tag due">HW #2 assigned</span></div>
+      </div>
+      <a class="wk-link" href="week-04.html">Week 4 →</a>
+    </div>
+
+    <div class="week-card">
+      <div class="wk-meta"><div class="wk-num">Week 5</div><div class="wk-dates">Sep 14 – 18</div></div>
+      <div class="wk-body">
+        <h3>Sampling Distributions &amp; the Logic of Hypothesis Testing</h3>
+        <p>Standard error, statistical hypotheses, one-sample z-tests.</p>
+        <div class="wk-tags"><span class="tag due">Quiz #2</span></div>
+      </div>
+      <a class="wk-link" href="week-05.html">Week 5 →</a>
+    </div>
+
+    <div class="week-card">
+      <div class="wk-meta"><div class="wk-num">Week 6</div><div class="wk-dates">Sep 21 – 25</div></div>
+      <div class="wk-body">
+        <h3>Decision Errors, Effect Size &amp; Exam 2</h3>
+        <p>Effect size and power for z-tests, exam review, and Exam 2.</p>
+        <div class="wk-tags"><span class="tag due">HW #2 due</span><span class="tag due">Quiz #3</span><span class="tag exam">Exam #2</span></div>
+      </div>
+      <a class="wk-link" href="week-06.html">Week 6 →</a>
+    </div>
+  </div>
+
+  <div class="unit">
+    <div class="unit-head">
+      <span class="unit-num">Unit 3</span>
+      <h2>t-tests</h2>
+      <span class="unit-span">Sep 28 – Oct 23</span>
+    </div>
+
+    <div class="week-card">
+      <div class="wk-meta"><div class="wk-num">Week 7</div><div class="wk-dates">Sep 28 – Oct 2</div></div>
+      <div class="wk-body">
+        <h3>One-Sample &amp; Related-Samples t-tests</h3>
+        <p>One-sample t-tests introduced, then related-samples; Lab 3 in Jamovi.</p>
+        <div class="wk-tags"><span class="tag due">HW #3 assigned</span></div>
+      </div>
+      <a class="wk-link" href="week-07.html">Week 7 →</a>
+    </div>
+
+    <div class="week-card">
+      <div class="wk-meta"><div class="wk-num">Week 8</div><div class="wk-dates">Oct 5 – 9</div></div>
+      <div class="wk-body">
+        <h3>Independent-Samples t-tests</h3>
+        <p>Independent-samples t-tests; Lab 4 (related-samples in Jamovi). Fall Break runs Oct 8–10 (Thu–Sat); no class the Friday.</p>
+        <div class="wk-tags"><span class="tag holiday">No class Oct 9 (Fall Break)</span></div>
+      </div>
+      <a class="wk-link" href="week-08.html">Week 8 →</a>
+    </div>
+
+    <div class="week-card">
+      <div class="wk-meta"><div class="wk-num">Week 9</div><div class="wk-dates">Oct 12 – 16</div></div>
+      <div class="wk-body">
+        <h3>t-test Assumptions &amp; Review</h3>
+        <p>Assumptions of t-tests, Research Results Workshop 2, Lab 5 in Jamovi.</p>
+        <div class="wk-tags"><span class="tag due">Quiz #4</span></div>
+      </div>
+      <a class="wk-link" href="week-09.html">Week 9 →</a>
+    </div>
+
+    <div class="week-card">
+      <div class="wk-meta"><div class="wk-num">Week 10</div><div class="wk-dates">Oct 19 – 23</div></div>
+      <div class="wk-body">
+        <h3>Exam 3 &amp; Introduction to ANOVA</h3>
+        <p>Exam review and Exam 3, then a first look at ANOVA types and components.</p>
+        <div class="wk-tags"><span class="tag due">HW #3 due</span><span class="tag exam">Exam #3</span><span class="tag due">HW #4 assigned</span></div>
+      </div>
+      <a class="wk-link" href="week-10.html">Week 10 →</a>
+    </div>
+  </div>
+
+  <div class="unit">
+    <div class="unit-head">
+      <span class="unit-num">Unit 4</span>
+      <h2>ANOVA</h2>
+      <span class="unit-span">Oct 26 – Nov 6</span>
+    </div>
+
+    <div class="week-card">
+      <div class="wk-meta"><div class="wk-num">Week 11</div><div class="wk-dates">Oct 26 – 30</div></div>
+      <div class="wk-body">
+        <h3>One-Way Between-Subjects ANOVA</h3>
+        <p>ANOVA basics, follow-up comparisons, Lab 6 in Jamovi.</p>
+        <div class="wk-tags"><span class="tag due">Quiz #5</span></div>
+      </div>
+      <a class="wk-link" href="week-11.html">Week 11 →</a>
+    </div>
+
+    <div class="week-card">
+      <div class="wk-meta"><div class="wk-num">Week 12</div><div class="wk-dates">Nov 2 – 6</div></div>
+      <div class="wk-body">
+        <h3>ANOVA Wrap-Up &amp; Exam 4</h3>
+        <p>Research Results Workshop 3, exam review, and Exam 4.</p>
+        <div class="wk-tags"><span class="tag due">HW #4 due</span><span class="tag due">Quiz #6</span><span class="tag exam">Exam #4</span></div>
+      </div>
+      <a class="wk-link" href="week-12.html">Week 12 →</a>
+    </div>
+  </div>
+
+  <div class="unit">
+    <div class="unit-head">
+      <span class="unit-num">Unit 5</span>
+      <h2>Correlation &amp; Regression</h2>
+      <span class="unit-span">Nov 9 – Dec 3</span>
+    </div>
+
+    <div class="week-card">
+      <div class="wk-meta"><div class="wk-num">Week 13</div><div class="wk-dates">Nov 9 – 13</div></div>
+      <div class="wk-body">
+        <h3>Correlation Basics</h3>
+        <p>Scatterplots, Pearson's r, hypothesis testing with correlation, Lab 7 in Jamovi.</p>
+        <div class="wk-tags"><span class="tag due">HW #5 assigned</span></div>
+      </div>
+      <a class="wk-link" href="week-13.html">Week 13 →</a>
+    </div>
+
+    <div class="week-card">
+      <div class="wk-meta"><div class="wk-num">Week 14</div><div class="wk-dates">Nov 16 – 20</div></div>
+      <div class="wk-body">
+        <h3>Correlation Wrap-Up &amp; Intro to Regression</h3>
+        <p>Research Results Workshop 4, then linear regression basics and Lab 8 in Jamovi.</p>
+        <div class="wk-tags"><span class="tag due">Quiz #7</span></div>
+      </div>
+      <a class="wk-link" href="week-14.html">Week 14 →</a>
+    </div>
+
+    <div class="week-card">
+      <div class="wk-meta"><div class="wk-num">Week 15</div><div class="wk-dates">Nov 23 – 27</div></div>
+      <div class="wk-body">
+        <h3>Catch-Up &amp; Thanksgiving Break</h3>
+        <p>Monday is a catch-up day if needed; no class Wednesday–Friday for Thanksgiving.</p>
+        <div class="wk-tags"><span class="tag holiday">Nov 25–27 no class</span></div>
+      </div>
+      <a class="wk-link" href="week-15.html">Week 15 →</a>
+    </div>
+
+    <div class="week-card">
+      <div class="wk-meta"><div class="wk-num">Week 16</div><div class="wk-dates">Nov 30 – Dec 3</div></div>
+      <div class="wk-body">
+        <h3>Regression Wrap-Up &amp; Exam 5 Review</h3>
+        <p>Quiz 8, correlation/regression review, Exam 5 review (swap day), Reading Day.</p>
+        <div class="wk-tags"><span class="tag due">HW #5 due</span><span class="tag due">Quiz #8</span></div>
+      </div>
+      <a class="wk-link" href="week-16.html">Week 16 →</a>
+    </div>
+  </div>
+
+  <div class="unit">
+    <div class="unit-head">
+      <span class="unit-num">Finals</span>
+      <h2>Final Exam</h2>
+      <span class="unit-span">Dec 7</span>
+    </div>
+
+    <div class="week-card">
+      <div class="wk-meta"><div class="wk-num">Week 17</div><div class="wk-dates">Dec 7</div></div>
+      <div class="wk-body">
+        <h3>Exam 5 (Final)</h3>
+        <p>Monday, December 7th, 3:00 – 6:00 pm.</p>
+        <div class="wk-tags"><span class="tag exam">Exam #5</span></div>
+      </div>
+      <a class="wk-link" href="week-17.html">Week 17 →</a>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  PSY 225 · Course Schedule Overview · Fall 2026 · University of North Carolina Wilmington
+</footer>
+
+</body>
+</html>
