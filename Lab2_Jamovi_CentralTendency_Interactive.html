@@ -154,9 +154,10 @@
     <p>We'll keep using the same dataset from Lab 1.</p>
     <ol>
       <li>Open jamovi and open the file you saved last time, <code>YourLastName_JamoviTutorial.omv</code>.</li>
-      <li>If you don't have that file anymore, click the button below to download a fresh copy of the data, then re-open it as a new CSV in jamovi (you'll want to double-check the measure types again, since a fresh CSV import won't remember any changes you made last time).</li>
+      <li>If you don't have that file anymore, click the button below to download a fresh copy of the data (it comes with variable descriptions already built in) and open that instead.</li>
     </ol>
-    <button class="btn secondary small" id="downloadCsvBtn">Download data (CSV)</button>
+    <button class="btn secondary small" id="downloadOmvBtn">Download data (.omv)</button>
+    <button class="btn secondary small" id="downloadCsvBtn">Download plain data instead (.csv)</button>
   </section>
 
   <section class="no-print">
@@ -347,8 +348,8 @@
 "S004,Junior,Neuroscience,Right,Group C,Moderate,1,7.0,6.0,26.7,398\n" +
 "S005,First-year,Psychology,Right,Group A,Moderate,5,8.4,3.5,43.2,404\n" +
 "S006,Senior,Psychology,Right,Group B,Moderate,1,4.0,6.0,57.5,430\n" +
-"S007,Senior,Psychology,Right,Group B,None,3,6.5,6.4,47.2,454\n" +
-"S008,Senior,Psychology,Right,Group A,None,3,7.0,4.9,52.0,401\n" +
+"S007,Senior,Psychology,Right,Group B,No caffeine,3,6.5,6.4,47.2,454\n" +
+"S008,Senior,Psychology,Right,Group A,No caffeine,3,7.0,4.9,52.0,401\n" +
 "S009,First-year,Psychology,Right,Group A,High,3,7.1,4.9,60.9,479\n" +
 "S010,Junior,Psychology,Right,Group C,Low,4,6.4,5.0,63.3,357\n" +
 "S011,Sophomore,Psychology,Right,Group B,Low,5,4.9,2.9,49.3,420\n" +
@@ -357,11 +358,11 @@
 "S014,Senior,Psychology,Right,Group B,High,2,5.1,5.2,41.6,499\n" +
 "S015,Junior,Psychology,Right,Group C,Low,5,7.8,6.3,44.1,425\n" +
 "S016,Sophomore,Psychology,Right,Group A,High,3,6.4,2.6,35.2,452\n" +
-"S017,Junior,Psychology,Left,Group C,None,4,6.7,4.3,41.1,417\n" +
+"S017,Junior,Psychology,Left,Group C,No caffeine,4,6.7,4.3,41.1,417\n" +
 "S018,First-year,Psychology,Right,Group C,Moderate,5,5.6,7.2,46.4,411\n" +
 "S019,Senior,Psychology,Right,Group B,Moderate,4,6.4,3.2,58.0,377\n" +
-"S020,Junior,Neuroscience,Right,Group A,None,5,8.2,3.0,67.2,444\n" +
-"S021,Senior,Psychology,Right,Group A,None,3,7.4,4.9,36.2,373\n" +
+"S020,Junior,Neuroscience,Right,Group A,No caffeine,5,8.2,3.0,67.2,444\n" +
+"S021,Senior,Psychology,Right,Group A,No caffeine,3,7.4,4.9,36.2,373\n" +
 "S022,Sophomore,Psychology,Right,Group C,Low,1,8.7,6.0,53.9,457\n" +
 "S023,Senior,Neuroscience,Left,Group C,High,3,8.1,4.5,39.6,480\n" +
 "S024,Senior,Psychology,Right,Group A,Moderate,1,7.3,6.9,54.7,440\n" +
@@ -369,8 +370,8 @@
 "S026,Sophomore,Psychology,Right,Group A,Moderate,2,7.3,6.0,31.7,445\n" +
 "S027,Junior,Neuroscience,Right,Group A,Low,2,7.7,5.5,59.3,403\n" +
 "S028,First-year,Psychology,Right,Group C,Moderate,2,6.5,8.7,43.9,471\n" +
-"S029,Sophomore,Psychology,Right,Group C,None,4,6.9,4.1,44.7,319\n" +
-"S030,Junior,Psychology,Right,Group A,None,3,6.0,0.9,39.3,402\n" +
+"S029,Sophomore,Psychology,Right,Group C,No caffeine,4,6.9,4.1,44.7,319\n" +
+"S030,Junior,Psychology,Right,Group A,No caffeine,3,6.0,0.9,39.3,402\n" +
 "S031,Senior,Psychology,Right,Group C,Moderate,5,7.9,7.4,43.5,311\n" +
 "S032,Senior,Psychology,Left,Group A,Moderate,3,5.5,3.7,54.3,338\n" +
 "S033,Sophomore,Psychology,Right,Group B,Low,2,7.7,4.7,48.1,495\n" +
@@ -388,21 +389,46 @@
 "S045,Senior,Neuroscience,Right,Group B,Low,3,6.0,3.7,69.5,425\n" +
 "S046,Senior,Neuroscience,Right,Group B,Moderate,5,5.7,5.3,70.8,415\n" +
 "S047,Sophomore,Psychology,Right,Group B,Moderate,4,6.8,5.8,50.7,463\n" +
-"S048,Sophomore,Psychology,Right,Group A,None,1,5.5,4.7,51.6,439\n" +
-"S049,Junior,Psychology,Right,Group C,None,5,6.1,5.9,60.8,457\n" +
+"S048,Sophomore,Psychology,Right,Group A,No caffeine,1,5.5,4.7,51.6,439\n" +
+"S049,Junior,Psychology,Right,Group C,No caffeine,5,6.1,5.9,60.8,457\n" +
 "S050,First-year,Undeclared,Left,Group A,Moderate,5,7.1,4.9,41.5,382\n" +
-"S051,Sophomore,Psychology,Right,Group A,None,5,8.1,5.5,53.3,469\n" +
+"S051,Sophomore,Psychology,Right,Group A,No caffeine,5,8.1,5.5,53.3,469\n" +
 "S052,First-year,Psychology,Right,Group A,Moderate,5,7.5,3.2,49.7,510\n" +
 "S053,Senior,Psychology,Right,Group A,Low,2,4.3,4.2,53.1,367\n" +
-"S054,Junior,Psychology,Left,Group A,None,5,7.1,4.9,41.7,371\n" +
+"S054,Junior,Psychology,Left,Group A,No caffeine,5,7.1,4.9,41.7,371\n" +
 "S055,Senior,Psychology,Right,Group A,High,2,6.9,6.0,34.1,493\n" +
 "S056,Senior,Neuroscience,Right,Group C,Low,5,7.3,3.8,29.3,409\n" +
 "S057,Junior,Neuroscience,Right,Group C,Low,3,8.6,5.4,38.8,497\n" +
 "S058,Junior,Neuroscience,Ambidextrous,Group A,Low,4,4.5,4.0,45.4,396\n" +
-"S059,First-year,Psychology,Left,Group A,None,4,6.1,4.3,47.1,500\n" +
-"S060,First-year,Psychology,Right,Group B,None,4,7.4,6.0,69.4,427\n";
+"S059,First-year,Psychology,Left,Group A,No caffeine,4,6.1,4.3,47.1,500\n" +
+"S060,First-year,Psychology,Right,Group B,No caffeine,4,7.4,6.0,69.4,427\n";
 
-  /* ---------- Download CSV ---------- */
+  var omvBase64 = "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";
+
+  function base64ToBlob(b64, mimeType) {
+    var byteChars = atob(b64);
+    var byteNumbers = new Array(byteChars.length);
+    for (var i = 0; i < byteChars.length; i++) {
+      byteNumbers[i] = byteChars.charCodeAt(i);
+    }
+    var byteArray = new Uint8Array(byteNumbers);
+    return new Blob([byteArray], { type: mimeType });
+  }
+
+  /* ---------- Download OMV (primary; has descriptions built in) ---------- */
+  document.getElementById('downloadOmvBtn').addEventListener('click', function () {
+    var blob = base64ToBlob(omvBase64, 'application/octet-stream');
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'intro_jamovi_data.omv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  /* ---------- Download CSV (fallback; no descriptions) ---------- */
   document.getElementById('downloadCsvBtn').addEventListener('click', function () {
     var blob = new Blob([csvContent], { type: 'text/csv' });
     var url = URL.createObjectURL(blob);
