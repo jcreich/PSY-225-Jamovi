@@ -159,6 +159,35 @@
     background:#F1EEE4;
   }
 
+  /* Hours table */
+  table.hours-table{width:100%; border-collapse:collapse; margin-top:6px;}
+  table.hours-table thead th{
+    text-align:left;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.72rem; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--teal-deep);
+    background:#EEF6F2;
+    padding:10px 14px;
+    border-bottom:2px solid var(--rule);
+  }
+  table.hours-table tbody tr{border-bottom:1px solid var(--line);}
+  table.hours-table tbody tr:last-child{border-bottom:none;}
+  table.hours-table td{
+    padding:12px 14px;
+    font-size:.92rem;
+    vertical-align:middle;
+  }
+  .type-tag{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.72rem;
+    padding:3px 10px;
+    border-radius:999px;
+    display:inline-block;
+    white-space:nowrap;
+  }
+  .type-tag.dropin{background:#E9F3EF; border:1px solid #BFE0D4; color:var(--teal-deep);}
+  .type-tag.appt{background:#FBF3DE; border:1px solid #E6D4A0; color:#8A6A1F;}
+
   /* Requirement timeline */
   .req-list{list-style:none; margin:16px 0 0; padding:0; display:grid; gap:12px;}
   .req-item{
@@ -253,10 +282,58 @@
         <p>Elizabeth is a former student of this course, now returning as your embedded tutor for the semester. She'll be a familiar, friendly presence both in class and during dedicated tutoring hours.</p>
         <ul class="info-list">
           <li><span class="k">Class visits</span><span>1–2 times per week</span></li>
-          <li><span class="k">Tutoring hours (subject to change) </span><span>Mondays 4-5pm; Tuesdays 11am-1pm, 2-3pm; Wednesdays 9:30-10:30am, 4-5pm</span></li>
           <li><span class="k">Email</span><span>efr5011@uncw.edu</span></li>
-          <li><span class="k">Tutoring location</span><span>TL 2012 & University Learning Center (ULC)</span></li>
+          <li><span class="k">Locations</span><span>TL 2012 &amp; University Learning Center (ULC)</span></li>
         </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="hours">
+    <div class="kicker">Finalized for the semester</div>
+    <h2>Tutoring Hours</h2>
+    <div class="card">
+      <p>Drop-ins are walk-in — no appointment needed. Appointment slots can be booked in advance.</p>
+      <table class="hours-table">
+        <thead>
+          <tr><th>Day</th><th>Time</th><th>Type</th><th>Location</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Monday</td>
+            <td>4:00 – 5:00 pm</td>
+            <td><span class="type-tag dropin">Drop-in</span></td>
+            <td>TL 2012 (our regular classroom)</td>
+          </tr>
+          <tr>
+            <td>Tuesday</td>
+            <td>11:00 am – 1:00 pm</td>
+            <td><span class="type-tag appt">Appointment</span></td>
+            <td>University Learning Center</td>
+          </tr>
+          <tr>
+            <td>Tuesday</td>
+            <td>2:00 – 3:00 pm</td>
+            <td><span class="type-tag dropin">Drop-in</span></td>
+            <td>University Learning Center</td>
+          </tr>
+          <tr>
+            <td>Wednesday</td>
+            <td>9:00 – 10:00 am</td>
+            <td><span class="type-tag appt">Appointment</span></td>
+            <td>University Learning Center</td>
+          </tr>
+          <tr>
+            <td>Wednesday</td>
+            <td>4:00 – 5:00 pm</td>
+            <td><span class="type-tag dropin">Drop-in</span></td>
+            <td>TL 2012 (our regular classroom)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout">
+        <strong>How to book an appointment:</strong> <span class="tbd">details coming soon</span> — check back here for booking instructions.
       </div>
     </div>
   </section>
