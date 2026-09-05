@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lab 3: Z-Scores in jamovi</title>
+<style>
+  :root {
+    --ink: #1f2937;
+    --muted: #5b6472;
+    --line: #d7dbe0;
+    --paper: #ffffff;
+    --page: #eef1f4;
+    --navy: #24344d;
+    --navy-light: #33486a;
+    --accent: #2e6f5e;
+    --accent-bg: #e5f2ee;
+    --wrong: #a3402f;
+    --wrong-bg: #fbeae6;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--page);
+    color: var(--ink);
+    line-height: 1.55;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 32px 20px 80px; }
+  header.masthead { margin-bottom: 8px; }
+  .eyebrow {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--accent); margin: 0 0 8px;
+  }
+  h1 { font-size: 26px; font-weight: 700; margin: 0 0 4px; color: var(--navy); }
+  .subtitle { font-size: 15px; color: var(--muted); margin: 0 0 28px; }
+
+  section {
+    background: var(--paper); border: 1px solid var(--line); border-radius: 14px;
+    padding: 24px 26px; margin-bottom: 20px;
+  }
+  section > .part-label {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--accent); margin: 0 0 4px;
+  }
+  section > h2 { font-size: 19px; margin: 0 0 14px; color: var(--navy); }
+  h3.sub-h { font-size: 15px; margin: 22px 0 10px; color: var(--navy); border-top: 1px solid var(--line); padding-top: 16px; }
+  h3.sub-h:first-of-type { border-top: none; padding-top: 0; margin-top: 4px; }
+  p { font-size: 15px; margin: 0 0 14px; }
+  p:last-child { margin-bottom: 0; }
+  ul, ol { padding-left: 22px; font-size: 15px; margin: 0 0 14px; }
+  li { margin-bottom: 8px; }
+  .note {
+    font-size: 14px; color: var(--muted); font-style: italic;
+    border-left: 3px solid var(--line); padding-left: 12px; margin: 14px 0 0;
+  }
+  a { color: var(--accent); }
+  code { background: var(--page); padding: 1px 5px; border-radius: 4px; font-size: 13px; }
+
+  button.btn {
+    font-family: inherit; font-size: 14px; font-weight: 600; padding: 10px 18px;
+    border-radius: 8px; border: 1px solid var(--navy); background: var(--navy); color: #fff; cursor: pointer;
+  }
+  button.btn:hover { background: var(--navy-light); }
+  button.btn.secondary { background: transparent; color: var(--navy); }
+  button.btn.secondary:hover { background: rgba(36,52,77,0.06); }
+  button.btn.small { padding: 7px 12px; font-size: 13px; }
+
+  table.ref { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 8px; }
+  table.ref th, table.ref td { border: 1px solid var(--line); padding: 8px 10px; text-align: left; vertical-align: top; }
+  table.ref th { background: var(--navy); color: #fff; font-weight: 600; }
+
+  .field-row { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; margin-bottom: 8px; }
+  .field-row label { font-size: 14px; font-weight: 600; color: var(--navy); }
+  input[type="text"], input[type="number"], textarea, select {
+    font-family: inherit; font-size: 14px; padding: 8px 10px; border: 1px solid var(--line);
+    border-radius: 6px; background: var(--paper); color: var(--ink);
+  }
+  input[type="number"] { width: 110px; }
+  textarea { width: 100%; resize: vertical; min-height: 56px; }
+
+  .q-block { margin-bottom: 22px; }
+  .q-block:last-child { margin-bottom: 0; }
+  .q-num {
+    display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px;
+    border-radius: 50%; background: var(--navy); color: #fff; font-size: 12px; font-weight: 700; margin-right: 8px;
+  }
+  .sub-q { font-size: 14px; font-weight: 600; color: var(--navy); margin: 12px 0 4px; }
+  .sub-q.first { margin-top: 4px; }
+
+  .lookup-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 6px 0 14px; }
+  .lookup-row label { font-size: 14px; color: var(--ink); }
+
+  .upload-box {
+    border: 1.5px dashed var(--line); border-radius: 10px; padding: 14px; margin-top: 8px; background: var(--page);
+  }
+  .upload-box .upload-label { font-size: 13px; font-weight: 600; color: var(--navy); margin-bottom: 8px; display: block; }
+  .upload-box input[type="file"] { font-size: 13px; }
+  .upload-preview { margin-top: 10px; max-width: 100%; }
+  .upload-preview img { max-width: 100%; border-radius: 6px; border: 1px solid var(--line); display: block; }
+  .upload-status { font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+  .controls-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+  .save-banner { font-size: 13px; color: var(--muted); margin-top: 10px; }
+
+  #printSummary { display: none; }
+
+  @media print {
+    body { background: #fff; }
+    .no-print { display: none !important; }
+    section { border: none; padding: 0; margin-bottom: 18px; box-shadow: none; }
+    #printSummary { display: block !important; }
+    #printSummary h2 { color: #000; border-bottom: 1px solid #000; padding-bottom: 4px; }
+    #printSummary .p-q { margin-bottom: 16px; page-break-inside: avoid; }
+    #printSummary img { max-width: 100%; border: 1px solid #999; margin-top: 6px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead no-print">
+    <p class="eyebrow">Introductory Statistics for the Behavioral Sciences</p>
+    <h1>Lab 3: Z-Scores in jamovi</h1>
+    <p class="subtitle">Type your answers and attach your jamovi output directly on this page. When you're finished, use the button at the bottom to save everything as a PDF to upload to Canvas.</p>
+  </header>
+
+  <section class="no-print" id="howto">
+    <h2>How to use this page</h2>
+    <ol>
+      <li>Work through the tutorial (Parts 2&ndash;6) together with your instructor &mdash; type your answers in as you go so there's a record that you followed along. No screenshots are needed for this part.</li>
+      <li>Then work through Parts 7 and 8 on your own, using the same steps you just practiced. These <strong>do</strong> need a screenshot of your jamovi output attached.</li>
+      <li>Everything is saved automatically in this browser as you go &mdash; as long as you keep using the same device and browser.</li>
+      <li>When you're finished, enter your name below, scroll to the bottom, and click <strong>Prepare &amp; save as PDF</strong>. Use your browser's print dialog to save it as a PDF, then upload that PDF to the Canvas assignment.</li>
+    </ol>
+    <div class="field-row" style="margin-top:4px;">
+      <label for="studentName">Your name:</label>
+      <input type="text" id="studentName" placeholder="First Last" style="flex:1; min-width:180px;" />
+    </div>
+  </section>
+
+  <section class="no-print">
+    <h2>Overview</h2>
+    <p>So far we've described variables one at a time &mdash; their center, their spread, their shape. This lab introduces <strong>z-scores</strong>: a way of re-expressing any raw score in terms of how many standard deviations it sits above or below the mean. Once a score is a z-score, we can use the standard normal (z) table to say something very precise: what percentage of scores fall above it, below it, or between two of them.</p>
+    <p style="margin-bottom:0;"><strong>Learning objectives</strong> &mdash; by the end of this lab you should be able to:</p>
+    <ul style="margin-top:10px;">
+      <li>Create a computed variable in jamovi that converts raw scores into z-scores, using the <code>Z()</code> function</li>
+      <li>Interpret what a z-score's sign and magnitude tell you about a score</li>
+      <li>Use a z-table to find the percentage of scores above, below, or between given z-scores</li>
+      <li>Use z-scores to identify potential outliers</li>
+    </ul>
+    <p class="note">Have your z-table handy &mdash; either the one from your textbook, or a printed copy &mdash; you'll need it throughout this lab.</p>
+  </section>
+
+  <section class="no-print">
+    <p class="part-label">Part 1</p>
+    <h2>Get the data</h2>
+    <p>This is a simulated dataset of 50 participants with three variables: a standardized IQ score, birth weight (in pounds), and height (in inches) &mdash; all variables where it's genuinely useful to know how a person compares to the group, which is exactly what z-scores are for.</p>
+    <button class="btn" id="downloadOmvBtn">Download data (.omv)</button>
+    <p class="note">This file already has a description written in for each variable. Save it somewhere you can find it, like your Desktop or a course folder.</p>
+    <p class="note">Having trouble opening an <code>.omv</code> file, or using a computer that won't run jamovi? <button class="btn secondary small" id="downloadCsvBtn" style="vertical-align:baseline;">Download plain data instead (.csv)</button></p>
+  </section>
+
+  <section class="no-print">
+    <p class="part-label">Part 2</p>
+    <h2>Calculating z-scores in jamovi</h2>
+    <p>As an example, let's calculate z-scores for <strong>IQScore</strong>.</p>
+    <ol>
+      <li>Make sure you're in the <strong>Data</strong> tab.</li>
+      <li>Highlight the <strong>IQScore</strong> column (click on the column header).</li>
+      <li>Click <strong>Add</strong> (in the ribbon, under Variables options) &rarr; <strong>Computed Variable</strong> &rarr; <strong>Insert</strong>.</li>
+      <li>Name the new variable <code>ZIQScore</code> and give it the description: <em>z-scores for IQScore</em>.</li>
+      <li>Click the <strong>f<sub>x</sub></strong> dropdown menu, find the <strong>Z</strong> function, and double-click it. This should add the function after the equals sign.</li>
+      <li>In the same <strong>f<sub>x</sub></strong> dropdown, find <strong>IQScore</strong> and double-click it. This should add the variable inside the function's parentheses.</li>
+      <li>Click outside the function box to populate the z-scores in the ZIQScore column.</li>
+    </ol>
+  </section>
+
+  <section class="no-print">
+    <p class="part-label">Part 3</p>
+    <h2>ZIQScore &mdash; what is it?</h2>
+    <p>The values in the ZIQScore column are the corresponding z-scores of the values in the IQScore column. For example, participant P017 has an IQScore of 80, which is associated with a z-score of about <strong>&minus;1.16</strong>.</p>
+    <p>Because that z-score is negative, we know an IQScore of 80 is below average. The size of the number (1.16) tells us <em>how far</em> below average it is &mdash; about 1.16 standard deviations below the mean.</p>
+  </section>
+
+  <section class="no-print">
+    <p class="part-label">Part 4</p>
+    <h2>Take a closer look at the z-scores</h2>
+    <p>To aid our understanding, let's get the descriptive statistics and a histogram of the ZIQScore column.</p>
+    <ol>
+      <li>Go to the <strong>Analyses</strong> tab.</li>
+      <li>Click <strong>Exploration</strong> &rarr; <strong>Descriptives</strong>.</li>
+      <li>Move <strong>ZIQScore</strong> into the <strong>Variables</strong> box.</li>
+      <li>Under <strong>Plots</strong>, check <strong>Histogram</strong>.</li>
+    </ol>
+    <p class="sub-q first">Understanding check: based on what you see, what are some characteristics of z-scores? (Think about things like the mean, the range of values, and the shape of the distribution.)</p>
+    <textarea id="t_understand"></textarea>
+  </section>
+
+  <section class="no-print">
+    <p class="part-label">Part 5</p>
+    <h2>Using z-scores to spot potential outliers</h2>
+    <p>Once your data is standardized, spotting a potential outlier is simple: a common rule of thumb is that any case with a z-score beyond <strong>&plusmn;3</strong> (that is, more than 3 standard deviations from the mean) is worth a closer look.</p>
+    <p class="sub-q first">Look through the ZIQScore column. Are there any potential outliers in IQScore by this rule? How do you know?</p>
+    <textarea id="t_outlier"></textarea>
+  </section>
+
+  <section class="no-print">
+    <p class="part-label">Part 6</p>
+    <h2>Using z-scores from jamovi</h2>
+    <p>Now let's use the z-scores you just created to answer a few questions. You'll need to be in the <strong>Data</strong> tab to look up the z-scores, and your z-table to look up the percentages.</p>
+
+    <div class="lookup-row">
+      <label>1. What z-score is associated with an IQScore of 115?</label>
+      <input type="number" step="any" class="qnum" id="t_q1_z" />
+    </div>
+    <div class="lookup-row">
+      <label>2. What percent of scores are above an IQScore of 115?</label>
+      <input type="number" step="any" class="qnum" id="t_q2_pabove" />%
+    </div>
+    <div class="lookup-row">
+      <label>3. What z-score is associated with an IQScore of 80?</label>
+      <input type="number" step="any" class="qnum" id="t_q3_z" />
+    </div>
+    <div class="lookup-row">
+      <label>4. What percent of scores are below an IQScore of 80?</label>
+      <input type="number" step="any" class="qnum" id="t_q4_pbelow" />%
+    </div>
+    <div class="lookup-row">
+      <label>5. What percent of scores are between an IQScore of 80 and 115?</label>
+      <input type="number" step="any" class="qnum" id="t_q5_between" />%
+    </div>
+  </section>
+
+  <section>
+    <p class="part-label">Part 7</p>
+    <h2>Lab activity: BirthWeightLbs</h2>
+    <p class="no-print">Now do the same thing on your own with <strong>BirthWeightLbs</strong>: get its descriptives, create a computed z-score variable (name it <code>ZBirthWeightLbs</code>), and answer the questions below. <strong>Attach a screenshot of your jamovi output.</strong></p>
+
+    <h3 class="sub-h">Z-scores and percentages</h3>
+    <div class="lookup-row">
+      <label>1. What z-score is associated with a BirthWeightLbs of 6.0?</label>
+      <input type="number" step="any" class="qnum" id="bw_q1_z" />
+    </div>
+    <div class="lookup-row">
+      <label>&nbsp;&nbsp;&nbsp;What percent of scores are below 6.0?</label>
+      <input type="number" step="any" class="qnum" id="bw_q1_pbelow" />%
+    </div>
+    <div class="lookup-row">
+      <label>2. What z-score is associated with a BirthWeightLbs of 7.5?</label>
+      <input type="number" step="any" class="qnum" id="bw_q2_z" />
+    </div>
+    <div class="lookup-row">
+      <label>&nbsp;&nbsp;&nbsp;What percent of scores are above 7.5?</label>
+      <input type="number" step="any" class="qnum" id="bw_q2_pabove" />%
+    </div>
+    <div class="lookup-row">
+      <label>3. What z-score is associated with a BirthWeightLbs of 9.0?</label>
+      <input type="number" step="any" class="qnum" id="bw_q3_z" />
+    </div>
+    <div class="lookup-row">
+      <label>&nbsp;&nbsp;&nbsp;What percent of scores are above 9.0?</label>
+      <input type="number" step="any" class="qnum" id="bw_q3_pabove" />%
+    </div>
+    <div class="lookup-row">
+      <label>4. What percent of scores are between a BirthWeightLbs of 6.0 and 9.0?</label>
+      <input type="number" step="any" class="qnum" id="bw_between" />%
+    </div>
+
+    <h3 class="sub-h">Outliers</h3>
+    <p class="sub-q first">Are there any potential outliers in BirthWeightLbs (using the |z| &gt; 3 rule)? How do you know?</p>
+    <textarea id="bw_outlier"></textarea>
+
+    <div class="upload-box no-print">
+      <span class="upload-label">Attach your jamovi output (screenshot) for BirthWeightLbs</span>
+      <input type="file" id="bw_file" accept="image/*" />
+      <div class="upload-preview" id="bw_preview"></div>
+      <div class="upload-status" id="bw_status"></div>
+    </div>
+  </section>
+
+  <section>
+    <p class="part-label">Part 8</p>
+    <h2>Lab activity: HeightInches</h2>
+    <p class="no-print">Repeat the process one more time with <strong>HeightInches</strong>: get its descriptives, create a computed z-score variable (name it <code>ZHeightInches</code>), and answer the questions below. <strong>Attach a screenshot of your jamovi output.</strong></p>
+
+    <h3 class="sub-h">Z-scores and percentages</h3>
+    <div class="lookup-row">
+      <label>1. What z-score is associated with a HeightInches of 60?</label>
+      <input type="number" step="any" class="qnum" id="ht_q1_z" />
+    </div>
+    <div class="lookup-row">
+      <label>&nbsp;&nbsp;&nbsp;What percent of scores are below 60?</label>
+      <input type="number" step="any" class="qnum" id="ht_q1_pbelow" />%
+    </div>
+    <div class="lookup-row">
+      <label>2. What z-score is associated with a HeightInches of 64?</label>
+      <input type="number" step="any" class="qnum" id="ht_q2_z" />
+    </div>
+    <div class="lookup-row">
+      <label>&nbsp;&nbsp;&nbsp;What percent of scores are above 64?</label>
+      <input type="number" step="any" class="qnum" id="ht_q2_pabove" />%
+    </div>
+    <div class="lookup-row">
+      <label>3. What z-score is associated with a HeightInches of 68?</label>
+      <input type="number" step="any" class="qnum" id="ht_q3_z" />
+    </div>
+    <div class="lookup-row">
+      <label>&nbsp;&nbsp;&nbsp;What percent of scores are above 68?</label>
+      <input type="number" step="any" class="qnum" id="ht_q3_pabove" />%
+    </div>
+    <div class="lookup-row">
+      <label>4. What percent of scores are between a HeightInches of 60 and 68?</label>
+      <input type="number" step="any" class="qnum" id="ht_between" />%
+    </div>
+
+    <h3 class="sub-h">Outliers</h3>
+    <p class="sub-q first">Are there any potential outliers in HeightInches (using the |z| &gt; 3 rule)? How do you know?</p>
+    <textarea id="ht_outlier"></textarea>
+
+    <div class="upload-box no-print">
+      <span class="upload-label">Attach your jamovi output (screenshot) for HeightInches</span>
+      <input type="file" id="ht_file" accept="image/*" />
+      <div class="upload-preview" id="ht_preview"></div>
+      <div class="upload-status" id="ht_status"></div>
+    </div>
+  </section>
+
+  <section class="no-print">
+    <h2>Submit your work</h2>
+    <p>Click <strong>Prepare &amp; save as PDF</strong> below. This will open your browser's print dialog &mdash; choose <strong>Save as PDF</strong> as the destination, then upload the resulting PDF to the Canvas assignment.</p>
+    <div class="controls-row">
+      <button class="btn" id="prepareBtn">Prepare &amp; save as PDF</button>
+      <button class="btn secondary" id="clearAllBtn">Clear all my answers</button>
+    </div>
+    <p class="save-banner" id="saveBanner"></p>
+    <p class="note">Your typed answers and attached images are saved automatically in this browser as you work, in case you need to come back later.</p>
+  </section>
+
+  <div id="printSummary">
+    <h2 id="ps-title"></h2>
+    <div id="ps-body"></div>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  var STORAGE_KEY = 'jamoviLab3ZScoresAnswers_v1';
+
+  var textFieldIds = [
+    'studentName', 't_understand', 't_outlier',
+    't_q1_z', 't_q2_pabove', 't_q3_z', 't_q4_pbelow', 't_q5_between',
+    'bw_q1_z', 'bw_q1_pbelow', 'bw_q2_z', 'bw_q2_pabove', 'bw_q3_z', 'bw_q3_pabove', 'bw_between', 'bw_outlier',
+    'ht_q1_z', 'ht_q1_pbelow', 'ht_q2_z', 'ht_q2_pabove', 'ht_q3_z', 'ht_q3_pabove', 'ht_between', 'ht_outlier'
+  ];
+  var imageFieldIds = ['bw', 'ht'];
+  var imageData = {};
+
+  var csvContent = "ParticipantID,IQScore,BirthWeightLbs,HeightInches\n" +
+"P001,100,8.3,63.2\n" +
+"P002,104,6.2,61.8\n" +
+"P003,96,7.6,64.4\n" +
+"P004,87,8.1,69.6\n" +
+"P005,93,7.3,61.9\n" +
+"P006,85,8.3,62.4\n" +
+"P007,101,7.4,64.5\n" +
+"P008,120,8.2,65.2\n" +
+"P009,93,9.1,63.6\n" +
+"P010,91,6.8,63.5\n" +
+"P011,107,7.7,65.8\n" +
+"P012,105,7.0,65.3\n" +
+"P013,102,7.6,61.4\n" +
+"P014,86,6.2,63.8\n" +
+"P015,100,6.9,64.1\n" +
+"P016,110,7.3,61.4\n" +
+"P017,80,8.5,64.6\n" +
+"P018,93,8.8,61.9\n" +
+"P019,71,6.0,66.4\n" +
+"P020,81,6.6,64.5\n" +
+"P021,72,8.2,64.2\n" +
+"P022,96,5.3,62.5\n" +
+"P023,81,7.0,63.7\n" +
+"P024,104,7.4,59.0\n" +
+"P025,102,8.9,61.2\n" +
+"P026,97,8.3,64.9\n" +
+"P027,62,7.1,58.7\n" +
+"P028,92,7.1,66.1\n" +
+"P029,99,7.2,59.6\n" +
+"P030,102,9.2,65.9\n" +
+"P031,77,7.0,61.9\n" +
+"P032,93,7.2,65.9\n" +
+"P033,85,7.9,64.3\n" +
+"P034,88,7.4,60.2\n" +
+"P035,116,7.3,67.1\n" +
+"P036,88,6.3,67.6\n" +
+"P037,100,7.5,63.8\n" +
+"P038,113,7.0,63.3\n" +
+"P039,91,8.8,63.6\n" +
+"P040,98,8.2,61.6\n" +
+"P041,102,7.5,66.7\n" +
+"P042,101,8.2,62.6\n" +
+"P043,82,7.1,63.9\n" +
+"P044,101,8.7,62.0\n" +
+"P045,120,7.5,62.4\n" +
+"P046,77,8.1,60.8\n" +
+"P047,113,6.1,67.1\n" +
+"P048,102,7.9,63.6\n" +
+"P049,90,5.6,66.4\n" +
+"P050,130,5.3,64.0\n";
+
+  var omvBase64 = "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";
+
+  function base64ToBlob(b64, mimeType) {
+    var byteChars = atob(b64);
+    var byteNumbers = new Array(byteChars.length);
+    for (var i = 0; i < byteChars.length; i++) {
+      byteNumbers[i] = byteChars.charCodeAt(i);
+    }
+    var byteArray = new Uint8Array(byteNumbers);
+    return new Blob([byteArray], { type: mimeType });
+  }
+
+  document.getElementById('downloadOmvBtn').addEventListener('click', function () {
+    var blob = base64ToBlob(omvBase64, 'application/octet-stream');
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'zscore_practice_data.omv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  document.getElementById('downloadCsvBtn').addEventListener('click', function () {
+    var blob = new Blob([csvContent], { type: 'text/csv' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'zscore_practice_data.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  /* ---------- Image upload: downscale + preview + store ---------- */
+  function handleImageUpload(key, file) {
+    var statusEl = document.getElementById(key + '_status');
+    var previewEl = document.getElementById(key + '_preview');
+    if (!file) return;
+    if (!file.type || file.type.indexOf('image/') !== 0) {
+      statusEl.textContent = 'Please choose an image file.';
+      return;
+    }
+    statusEl.textContent = 'Processing...';
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      var img = new Image();
+      img.onload = function () {
+        var maxW = 900;
+        var scale = Math.min(1, maxW / img.width);
+        var canvas = document.createElement('canvas');
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        var dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+        imageData[key] = dataUrl;
+        previewEl.innerHTML = '<img src="' + dataUrl + '" alt="Attached jamovi output" />';
+        statusEl.textContent = 'Attached.';
+        saveState();
+      };
+      img.onerror = function () { statusEl.textContent = 'Could not read that image.'; };
+      img.src = e.target.result;
+    };
+    reader.onerror = function () { statusEl.textContent = 'Could not read that file.'; };
+    reader.readAsDataURL(file);
+  }
+
+  imageFieldIds.forEach(function (key) {
+    var input = document.getElementById(key + '_file');
+    input.addEventListener('change', function (e) {
+      handleImageUpload(key, e.target.files && e.target.files[0]);
+    });
+  });
+
+  /* ---------- Save / restore progress ---------- */
+  function saveState() {
+    var data = { text: {}, images: imageData };
+    textFieldIds.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) data.text[id] = el.value;
+    });
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      document.getElementById('saveBanner').textContent = 'Saved in this browser at ' + new Date().toLocaleTimeString() + '.';
+    } catch (e) {
+      document.getElementById('saveBanner').textContent = 'Could not autosave (browser storage may be full) \u2014 consider preparing your PDF soon.';
+    }
+  }
+
+  function restoreState() {
+    var raw;
+    try { raw = localStorage.getItem(STORAGE_KEY); } catch (e) { raw = null; }
+    if (!raw) return;
+    var data;
+    try { data = JSON.parse(raw); } catch (e) { return; }
+    if (data.text) {
+      textFieldIds.forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el && data.text[id] !== undefined) el.value = data.text[id];
+      });
+    }
+    if (data.images) {
+      imageFieldIds.forEach(function (key) {
+        if (data.images[key]) {
+          imageData[key] = data.images[key];
+          document.getElementById(key + '_preview').innerHTML = '<img src="' + data.images[key] + '" alt="Attached jamovi output" />';
+          document.getElementById(key + '_status').textContent = 'Attached.';
+        }
+      });
+    }
+  }
+
+  function debounce(fn, wait) {
+    var t;
+    return function () { clearTimeout(t); t = setTimeout(fn, wait); };
+  }
+
+  textFieldIds.forEach(function (id) {
+    var el = document.getElementById(id);
+    if (el) el.addEventListener('input', debounce(saveState, 400));
+  });
+
+  document.getElementById('clearAllBtn').addEventListener('click', function () {
+    if (!confirm('Clear all saved answers and attached images on this page? This cannot be undone.')) return;
+    try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+    textFieldIds.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) el.value = '';
+    });
+    imageFieldIds.forEach(function (key) {
+      imageData[key] = null;
+      document.getElementById(key + '_preview').innerHTML = '';
+      document.getElementById(key + '_status').textContent = '';
+      document.getElementById(key + '_file').value = '';
+    });
+    document.querySelectorAll('.qnum').forEach(function (el) { el.classList.remove('correct', 'incorrect'); });
+    document.querySelectorAll('.tag').forEach(function (el) { el.textContent = ''; });
+    document.getElementById('saveBanner').textContent = 'Cleared.';
+  });
+
+  restoreState();
+
+  /* ---------- Print summary ---------- */
+  function val(id) {
+    var el = document.getElementById(id);
+    return el ? (el.value || '').trim() || '(no answer entered)' : '(no answer entered)';
+  }
+
+  function imgHtml(key) {
+    return imageData[key]
+      ? '<img src="' + imageData[key] + '" alt="jamovi output" />'
+      : '<p style="color:#a3402f; font-style:italic;">No output attached for this question.</p>';
+  }
+
+  function buildPrintSummary() {
+    var name = val('studentName');
+    document.getElementById('ps-title').textContent = 'Lab 3: Z-Scores in jamovi \u2014 ' + name;
+    var b = document.getElementById('ps-body');
+    b.innerHTML =
+      '<div class="p-q"><h3>Tutorial: IQScore</h3>' +
+        '<p><strong>Understanding check:</strong> ' + val('t_understand') + '</p>' +
+        '<p><strong>Potential outliers:</strong> ' + val('t_outlier') + '</p>' +
+        '<p><strong>z for IQ=115:</strong> ' + val('t_q1_z') + ' &nbsp; <strong>% above:</strong> ' + val('t_q2_pabove') + '</p>' +
+        '<p><strong>z for IQ=80:</strong> ' + val('t_q3_z') + ' &nbsp; <strong>% below:</strong> ' + val('t_q4_pbelow') + '</p>' +
+        '<p><strong>% between 80 and 115:</strong> ' + val('t_q5_between') + '</p>' +
+      '</div>' +
+      '<div class="p-q"><h3>Part 7: BirthWeightLbs</h3>' +
+        '<p><strong>z for 6.0:</strong> ' + val('bw_q1_z') + ' &nbsp; <strong>% below:</strong> ' + val('bw_q1_pbelow') + '</p>' +
+        '<p><strong>z for 7.5:</strong> ' + val('bw_q2_z') + ' &nbsp; <strong>% above:</strong> ' + val('bw_q2_pabove') + '</p>' +
+        '<p><strong>z for 9.0:</strong> ' + val('bw_q3_z') + ' &nbsp; <strong>% above:</strong> ' + val('bw_q3_pabove') + '</p>' +
+        '<p><strong>% between 6.0 and 9.0:</strong> ' + val('bw_between') + '</p>' +
+        '<p><strong>Potential outliers:</strong> ' + val('bw_outlier') + '</p>' +
+        imgHtml('bw') +
+      '</div>' +
+      '<div class="p-q"><h3>Part 8: HeightInches</h3>' +
+        '<p><strong>z for 60:</strong> ' + val('ht_q1_z') + ' &nbsp; <strong>% below:</strong> ' + val('ht_q1_pbelow') + '</p>' +
+        '<p><strong>z for 64:</strong> ' + val('ht_q2_z') + ' &nbsp; <strong>% above:</strong> ' + val('ht_q2_pabove') + '</p>' +
+        '<p><strong>z for 68:</strong> ' + val('ht_q3_z') + ' &nbsp; <strong>% above:</strong> ' + val('ht_q3_pabove') + '</p>' +
+        '<p><strong>% between 60 and 68:</strong> ' + val('ht_between') + '</p>' +
+        '<p><strong>Potential outliers:</strong> ' + val('ht_outlier') + '</p>' +
+        imgHtml('ht') +
+      '</div>';
+  }
+
+  document.getElementById('prepareBtn').addEventListener('click', function () {
+    buildPrintSummary();
+    setTimeout(function () { window.print(); }, 50);
+  });
+})();
+</script>
+</body>
+</html>
