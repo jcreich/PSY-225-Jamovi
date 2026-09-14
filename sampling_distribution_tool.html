@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Sampling Distribution of Sample Means | PSY 225</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600;700&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --teal-900:#0f3d3a;
+    --teal-700:#1d6e68;
+    --teal-500:#2c8f86;
+    --teal-100:#e2f0ee;
+    --gold-600:#b8860b;
+    --gold-400:#d4a531;
+    --gold-100:#faf1dc;
+    --sand-50:#faf7f0;
+    --sand-100:#f3ecdd;
+    --ink-900:#1c2422;
+    --ink-600:#4a5a56;
+    --ink-400:#7c8b87;
+    --line:#dfd6c2;
+    --white:#ffffff;
+    --pop-color:#1d6e68;
+    --sample-color:#b8860b;
+    --sdm-color:#8a3b2a;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--sand-50);
+    color:var(--ink-900);
+    font-family:'Public Sans', sans-serif;
+    line-height:1.5;
+  }
+  .wrap{max-width:1040px;margin:0 auto;padding:28px 20px 80px;}
+  header.hero{
+    background:linear-gradient(135deg,var(--teal-900),var(--teal-700));
+    color:var(--sand-50);
+    border-radius:16px;
+    padding:32px 32px 28px;
+    margin-bottom:24px;
+    position:relative;
+    overflow:hidden;
+  }
+  header.hero::after{
+    content:"";
+    position:absolute;right:-40px;top:-40px;width:220px;height:220px;
+    border-radius:50%;background:rgba(212,165,49,0.18);
+  }
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--gold-400);margin:0 0 10px;
+  }
+  h1{
+    font-family:'Source Serif 4',serif;
+    font-size:clamp(24px,4vw,34px);
+    margin:0 0 10px;font-weight:700;
+  }
+  .hero p{margin:0;max-width:640px;color:var(--sand-100);font-size:15px;}
+  .card{
+    background:var(--white);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:24px;
+    margin-bottom:20px;
+    box-shadow:0 1px 2px rgba(15,61,58,0.04);
+  }
+  .card h2{
+    font-family:'Source Serif 4',serif;
+    font-size:21px;margin:0 0 6px;
+    color:var(--teal-900);
+    display:flex;align-items:center;gap:10px;
+  }
+  .card h2 .num{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;background:var(--teal-100);color:var(--teal-700);
+    border-radius:50%;width:26px;height:26px;
+    display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;
+  }
+  .subtitle{color:var(--ink-600);font-size:14px;margin:0 0 18px;}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+  @media(max-width:720px){.grid-2{grid-template-columns:1fr;}}
+  .stack{display:flex;flex-direction:column;gap:14px;}
+
+  /* concept ladder */
+  .ladder{display:flex;flex-direction:column;gap:10px;}
+  .rung{
+    display:grid;grid-template-columns:120px 1fr;gap:14px;
+    align-items:center;
+    background:var(--sand-100);
+    border-radius:10px;padding:12px 16px;
+    border-left:4px solid var(--teal-500);
+  }
+  .rung.b{border-left-color:var(--gold-600);}
+  .rung.c{border-left-color:var(--sdm-color);}
+  .rung .label{
+    font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;
+    color:var(--ink-900);
+  }
+  .rung .desc{font-size:13.5px;color:var(--ink-600);}
+  .rung .desc b{color:var(--ink-900);}
+
+  /* controls */
+  .controls{
+    display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end;
+    background:var(--sand-100);border-radius:10px;padding:16px;margin-bottom:16px;
+  }
+  .field{display:flex;flex-direction:column;gap:6px;min-width:150px;}
+  .field label{font-size:12px;font-weight:600;color:var(--ink-600);text-transform:uppercase;letter-spacing:.04em;}
+  .field .val{font-family:'IBM Plex Mono',monospace;color:var(--teal-700);font-weight:600;}
+  select, input[type="range"]{width:100%;}
+  select{
+    padding:8px 10px;border-radius:8px;border:1px solid var(--line);
+    font-family:'Public Sans',sans-serif;font-size:13.5px;background:var(--white);
+  }
+  input[type="range"]{accent-color:var(--teal-700);}
+  .btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-left:auto;}
+  button{
+    font-family:'Public Sans',sans-serif;font-weight:600;font-size:13.5px;
+    border:none;border-radius:8px;padding:10px 16px;cursor:pointer;
+    transition:transform .05s ease;
+  }
+  button:active{transform:scale(0.97);}
+  .btn-primary{background:var(--teal-700);color:#fff;}
+  .btn-primary:hover{background:var(--teal-900);}
+  .btn-secondary{background:var(--white);color:var(--teal-700);border:1px solid var(--teal-500);}
+  .btn-secondary:hover{background:var(--teal-100);}
+  .btn-ghost{background:transparent;color:var(--ink-600);border:1px solid var(--line);}
+
+  .canvases{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  @media(max-width:720px){.canvases{grid-template-columns:1fr;}}
+  .canvas-box{background:var(--sand-50);border:1px solid var(--line);border-radius:10px;padding:12px;}
+  .canvas-box .ctitle{font-size:12.5px;font-weight:600;color:var(--ink-600);margin-bottom:6px;text-align:center;}
+  canvas{width:100%;display:block;}
+
+  .stat-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px;}
+  .stat{
+    flex:1;min-width:130px;background:var(--teal-100);border-radius:10px;padding:12px 14px;
+  }
+  .stat.gold{background:var(--gold-100);}
+  .stat .k{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-600);font-weight:600;}
+  .stat .v{font-family:'IBM Plex Mono',monospace;font-size:19px;color:var(--teal-900);font-weight:600;}
+  .stat.gold .v{color:var(--gold-600);}
+
+  .formula-box{
+    background:var(--teal-900);color:#fff;border-radius:12px;padding:20px 24px;
+    display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-bottom:16px;
+  }
+  .formula{font-family:'IBM Plex Mono',monospace;font-size:22px;background:rgba(255,255,255,0.08);
+    padding:10px 18px;border-radius:8px;}
+  .formula .frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 4px;}
+  .formula .frac .top{border-bottom:2px solid #fff;padding:0 6px 2px;}
+  .formula .frac .bot{padding:2px 6px 0;}
+  .formula-note{font-size:13px;color:var(--sand-100);flex:1;min-width:200px;}
+
+  .quiz-q{background:var(--sand-100);border-radius:10px;padding:16px;margin-bottom:12px;}
+  .quiz-q p.q{font-weight:600;margin:0 0 10px;font-size:14.5px;}
+  .opts{display:flex;flex-direction:column;gap:8px;}
+  .opt{
+    display:flex;align-items:center;gap:10px;background:var(--white);
+    border:1px solid var(--line);border-radius:8px;padding:9px 12px;cursor:pointer;font-size:13.5px;
+  }
+  .opt:hover{border-color:var(--teal-500);}
+  .opt.correct{border-color:var(--teal-500);background:var(--teal-100);}
+  .opt.incorrect{border-color:#b0503f;background:#fbe9e5;}
+  .feedback{font-size:13px;margin-top:8px;padding:10px 12px;border-radius:8px;display:none;}
+  .feedback.show{display:block;}
+  .feedback.good{background:var(--teal-100);color:var(--teal-900);}
+  .feedback.bad{background:#fbe9e5;color:#7a2c1c;}
+
+  .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--ink-600);margin-top:8px;}
+  .legend span{display:inline-flex;align-items:center;gap:6px;}
+  .sw{width:12px;height:12px;border-radius:3px;display:inline-block;}
+
+  .takeaway{
+    display:flex;gap:12px;align-items:flex-start;background:var(--sand-100);
+    border-radius:10px;padding:14px 16px;
+  }
+  .takeaway .ico{font-size:18px;}
+  .takeaway p{margin:0;font-size:13.5px;color:var(--ink-900);}
+  .takeaway b{color:var(--teal-700);}
+
+  footer{text-align:center;color:var(--ink-400);font-size:12px;margin-top:24px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <p class="eyebrow">PSY 225 &middot; Study Tool</p>
+    <h1>The Sampling Distribution of Sample Means</h1>
+    <p>Drag the sliders, draw samples, and watch the pattern build. This tool lets you generate the sampling distribution yourself instead of just reading about it — because it clicks a lot faster once you've seen it happen.</p>
+  </header>
+
+  <!-- SECTION 1: THE THREE DISTRIBUTIONS -->
+  <div class="card">
+    <h2><span class="num">1</span>Three Different Distributions — Don't Mix Them Up</h2>
+    <p class="subtitle">This is usually where the confusion starts. Here's the ladder from raw scores to the concept we actually use for hypothesis testing.</p>
+    <div class="ladder">
+      <div class="rung a">
+        <div class="label">POPULATION<br>DISTRIBUTION</div>
+        <div class="desc"><b>Every individual score</b> in the population. Has a mean (<i>μ</i>) and standard deviation (<i>σ</i>). Shape can be anything — normal, skewed, uniform.</div>
+      </div>
+      <div class="rung b">
+        <div class="label">SAMPLE<br>DISTRIBUTION</div>
+        <div class="desc"><b>The scores in one sample</b> you actually collected (<i>n</i> people). Has a sample mean (<i>M</i>) and standard deviation (<i>s</i>). One dataset, one histogram.</div>
+      </div>
+      <div class="rung c">
+        <div class="label">SAMPLING DIST.<br>OF MEANS</div>
+        <div class="desc"><b>Not raw scores — sample means.</b> A hypothetical distribution: what you'd get <i>if</i> you took many samples of size <i>n</i> and plotted all their means. This distribution is what standard error and hypothesis testing are built on.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: IS THIS A REAL DISTRIBUTION? -->
+  <div class="card">
+    <h2><span class="num">2</span>Wait — Is This a "Real" Distribution?</h2>
+    <p class="subtitle">No. And that's exactly the part that trips people up, so let's slow down on it.</p>
+
+    <div class="grid-2">
+      <div class="takeaway" style="background:var(--sand-100);align-items:flex-start;">
+        <span class="ico">🧪</span>
+        <p><b>In real research, you take ONE sample.</b> You don't collect 5, or 200, or 10,000 samples of size <i>n</i> and actually build a histogram of their means. You collect your one sample, calculate one mean (<i>M</i>), and that's the data you have.</p>
+      </div>
+      <div class="takeaway" style="background:var(--sand-100);align-items:flex-start;">
+        <span class="ico">📐</span>
+        <p><b>The sampling distribution is theoretical.</b> It describes what <i>would</i> happen if you (hypothetically, infinitely) repeated the sampling process. No one has ever actually drawn it from real data — it's a mathematical object, not an empirical one.</p>
+      </div>
+    </div>
+
+    <div class="formula-box" style="margin-top:16px;margin-bottom:0;background:var(--gold-100);color:var(--ink-900);">
+      <div style="font-size:26px;">🔑</div>
+      <div class="formula-note" style="color:var(--ink-900);">
+        <b>So why does it matter if we never build it?</b> Because the <b>Central Limit Theorem (CLT)</b> lets us know three things about this theoretical distribution — its shape, center, and spread — <i>without ever collecting it.</i> That's the whole trick: CLT hands you the picture in advance, so you can judge how likely or unlikely your one real sample mean is.
+      </div>
+    </div>
+
+    <div class="stack" style="margin-top:16px;">
+      <p style="font-size:13.5px;color:var(--ink-600);margin:0 0 4px;"><b style="color:var(--teal-700);">The Central Limit Theorem guarantees, as <i>n</i> gets larger:</b></p>
+      <div class="ladder">
+        <div class="rung a">
+          <div class="label">SHAPE →<br>NORMAL</div>
+          <div class="desc">The sampling distribution of means approaches a <b>normal (bell-shaped)</b> curve — <b>regardless of the population's shape.</b> Skewed, bimodal, uniform — doesn't matter. This is the part students usually find most surprising.</div>
+        </div>
+        <div class="rung b">
+          <div class="label">CENTER =<br>POPULATION MEAN</div>
+          <div class="desc">It's centered exactly on <b><i>μ</i></b>, the population mean. Sample means aren't biased high or low — they cluster around the true value.</div>
+        </div>
+        <div class="rung c">
+          <div class="label">SPREAD =<br><i>σ</i> / √<i>n</i></div>
+          <div class="desc">Its standard deviation (called <b>standard error</b>) shrinks as <i>n</i> increases, following <i>σ</i>/√<i>n</i> exactly — see Section 4.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="takeaway" style="background:var(--sand-100);align-items:flex-start;margin-top:16px;">
+      <span class="ico">🧲</span>
+      <p><b>A related idea — the Law of Large Numbers:</b> this is why increasing <i>n</i> makes your <i>one real</i> sample mean more trustworthy, even though you never touch the theoretical distribution itself. It states that as sample size increases, the sample mean gets closer and closer to the population mean (<i>μ</i>). CLT tells you about the <i>shape and spread</i> of a hypothetical distribution of sample means; the Law of Large Numbers tells you why your <i>single</i> sample mean converges on the truth as <i>n</i> grows. They're a package deal — bigger samples give you a more accurate estimate (Law of Large Numbers) <i>and</i> a more precise, predictable one (CLT + standard error).</p>
+    </div>
+
+    <p style="font-size:13px;color:var(--ink-400);margin:14px 0 0;">The simulation below <b>breaks the rule on purpose</b> — it actually draws hundreds of samples, something you'd never do with real participants, so you can watch the theoretical distribution CLT promises actually take shape in front of you.</p>
+  </div>
+
+  <!-- SECTION 3: THE SIMULATION -->
+  <div class="card">
+    <h2><span class="num">3</span>Build a Sampling Distribution (a Teaching Simulation)</h2>
+    <p class="subtitle">Choose a population shape, set your sample size (<i>n</i>), and draw samples one at a time — or let it run. Watch the right-hand histogram of sample means tighten and become normal, no matter what the population looks like.</p>
+    <div class="takeaway" style="background:var(--teal-100);margin-bottom:16px;">
+      <span class="ico">👀</span>
+      <p><b>Reality check:</b> in an actual study, you'd only ever have <i>one</i> dot on the right-hand histogram — your real sample mean. Everything else here is the simulator "cheating" by generating the theoretical distribution for you, so you can see what CLT is quietly guaranteeing every time you run a single study.</p>
+    </div>
+
+    <div class="controls">
+      <div class="field">
+        <label for="popShape">Population shape</label>
+        <select id="popShape">
+          <option value="normal">Normal</option>
+          <option value="skewed">Right-skewed</option>
+          <option value="uniform">Uniform</option>
+          <option value="bimodal">Bimodal</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="nSlider">Sample size (<i>n</i>): <span class="val" id="nVal">5</span></label>
+        <input type="range" id="nSlider" min="2" max="50" value="5">
+      </div>
+      <div class="btnrow">
+        <button class="btn-secondary" id="drawOne">Draw 1 sample</button>
+        <button class="btn-primary" id="drawMany">Draw 200 samples</button>
+        <button class="btn-ghost" id="resetBtn">Reset</button>
+      </div>
+    </div>
+
+    <div class="canvases">
+      <div class="canvas-box">
+        <div class="ctitle">Population (<i>μ</i> = 50, <i>σ</i> = 10) — latest sample in gold</div>
+        <canvas id="popCanvas" width="480" height="260"></canvas>
+        <div class="legend">
+          <span><span class="sw" style="background:var(--pop-color)"></span>Population</span>
+          <span><span class="sw" style="background:var(--sample-color)"></span>Current sample (<i>n</i> points)</span>
+        </div>
+      </div>
+      <div class="canvas-box">
+        <div class="ctitle">Sampling distribution of <em>M</em> (each bar = one sample mean)</div>
+        <canvas id="sdmCanvas" width="480" height="260"></canvas>
+        <div class="legend">
+          <span><span class="sw" style="background:var(--sdm-color)"></span>Sample means collected so far</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat"><div class="k">Samples drawn</div><div class="v" id="statCount">0</div></div>
+      <div class="stat"><div class="k">Mean of sample means</div><div class="v" id="statMeanOfMeans">—</div></div>
+      <div class="stat gold"><div class="k">SD of sample means (observed)</div><div class="v" id="statObsSE">—</div></div>
+      <div class="stat gold"><div class="k">Predicted <i>SE</i> = <i style="text-transform:none;display:inline-block;">σ</i> / √<i>n</i></div><div class="v" id="statPredSE">—</div></div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: THE FORMULA -->
+  <div class="card">
+    <h2><span class="num">4</span>Standard Error: Why √n Matters</h2>
+    <p class="subtitle">The spread of that sampling distribution (the SD of all those sample means) has a name: <b>standard error</b>. It's predictable — you don't have to simulate it to know how spread out it'll be.</p>
+    <div class="formula-box">
+      <div class="formula"><i>σ</i><sub><i>M</i></sub> = <span class="frac"><span class="top"><i>σ</i></span><span class="bot">√<i>n</i></span></span></div>
+      <div class="formula-note"><i>σ<sub>M</sub></i> = standard error of the mean &nbsp;·&nbsp; <i>σ</i> = population standard deviation &nbsp;·&nbsp; <i>n</i> = sample size.<br>Bigger samples pull sample means closer to <i>μ</i> — but the <em>square root</em> means you need to <b>quadruple <i>n</i> to cut the <i>SE</i> in half.</b></div>
+    </div>
+    <div class="controls" style="margin-bottom:0;">
+      <div class="field" style="min-width:200px;">
+        <label for="sigmaSlider">Population <i style="text-transform:none;display:inline-block;">σ</i>: <span class="val" id="sigmaVal">10</span></label>
+        <input type="range" id="sigmaSlider" min="2" max="30" value="10">
+      </div>
+      <div class="field" style="min-width:200px;">
+        <label for="nSlider2">Sample size <i>n</i>: <span class="val" id="nVal2">5</span></label>
+        <input type="range" id="nSlider2" min="1" max="200" value="5">
+      </div>
+      <div class="stat" style="max-width:220px;">
+        <div class="k">Resulting standard error</div>
+        <div class="v" id="seLive">4.47</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 5: QUICK CHECK -->
+  <div class="card">
+    <h2><span class="num">5</span>Quick Check</h2>
+    <p class="subtitle">Answer in your head before checking — that's where the actual learning happens.</p>
+
+    <div class="quiz-q" data-answer="c">
+      <p class="q">1. A population has <i>σ</i> = 12. If you increase your sample size from <i>n</i> = 4 to <i>n</i> = 16, what happens to the standard error?</p>
+      <div class="opts">
+        <div class="opt" data-val="a">It stays the same — <i>SE</i> doesn't depend on <i>n</i>.</div>
+        <div class="opt" data-val="b">It is cut to one-quarter of its original size.</div>
+        <div class="opt" data-val="c">It is cut in half.</div>
+        <div class="opt" data-val="d">It quadruples.</div>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="quiz-q" data-answer="b">
+      <p class="q">2. As you increase the number of samples you draw (not the sample size), the shape of the sampling distribution of means...</p>
+      <div class="opts">
+        <div class="opt" data-val="a">Gets narrower and narrower.</div>
+        <div class="opt" data-val="b">Looks more like a smooth, stable distribution — but its spread (<i>SE</i>) doesn't shrink.</div>
+        <div class="opt" data-val="c">Becomes identical to the population distribution's shape.</div>
+        <div class="opt" data-val="d">Becomes skewed, regardless of the population.</div>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="quiz-q" data-answer="d">
+      <p class="q">3. According to the Central Limit Theorem, the sampling distribution of the mean will be approximately normal...</p>
+      <div class="opts">
+        <div class="opt" data-val="a">Only if the population itself is normal.</div>
+        <div class="opt" data-val="b">Only if <i>n</i> is less than 30.</div>
+        <div class="opt" data-val="c">Never, if the population is skewed.</div>
+        <div class="opt" data-val="d">Even if the population is skewed, as long as <i>n</i> is reasonably large.</div>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="quiz-q" data-answer="c">
+      <p class="q">4. In an actual research study where you collect one sample and calculate one sample mean, how many of those means come from the sampling distribution of means?</p>
+      <div class="opts">
+        <div class="opt" data-val="a">All of them — you build the distribution from your data.</div>
+        <div class="opt" data-val="b">None — the sampling distribution isn't relevant to a single study.</div>
+        <div class="opt" data-val="c">Just one (your sample mean) — the rest of the distribution is theoretical, predicted by the CLT rather than collected.</div>
+        <div class="opt" data-val="d">It depends on your sample size.</div>
+      </div>
+      <div class="feedback"></div>
+    </div>
+  </div>
+
+  <!-- SECTION 6: TAKEAWAYS -->
+  <div class="card">
+    <h2><span class="num">6</span>The Four Things to Hold Onto</h2>
+    <div class="stack">
+      <div class="takeaway"><span class="ico">🧪</span><p><b>It's theoretical:</b> You never actually collect a sampling distribution. It describes what would happen over infinite hypothetical repeated samples — you only ever observe one point from it, your real sample mean.</p></div>
+      <div class="takeaway"><span class="ico">🎯</span><p><b>Centering:</b> The mean of the sampling distribution equals the population mean (<i>μ</i>). Sample means aren't biased — they cluster around the true value.</p></div>
+      <div class="takeaway"><span class="ico">📉</span><p><b>Spread shrinks with <i>n</i>:</b> Standard error = <i>σ</i>/√<i>n</i>. Larger samples give more precise (less variable) estimates of <i>μ</i> — but with diminishing returns.</p></div>
+      <div class="takeaway"><span class="ico">🔔</span><p><b>Shape becomes normal:</b> This is the Central Limit Theorem — regardless of the population's shape, the sampling distribution of means approaches normal as <i>n</i> increases (rule of thumb: <i>n</i> ≥ 30). CLT is what lets us know all of this <i>without</i> ever building the distribution for real.</p></div>
+    </div>
+  </div>
+
+  <footer>PSY 225 · Introductory Statistics for the Behavioral Sciences · Study tool for in-class use</footer>
+</div>
+
+<script>
+// ---------- utility: RNG for population shapes ----------
+const POP_MEAN = 50, POP_SD = 10;
+
+function randNormal(mean, sd){
+  let u=0,v=0;
+  while(u===0) u=Math.random();
+  while(v===0) v=Math.random();
+  return mean + sd*Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);
+}
+function sampleFromPop(shape){
+  switch(shape){
+    case 'normal': return randNormal(POP_MEAN, POP_SD);
+    case 'skewed': {
+      // exponential-like, shifted/scaled to have mean ~50, sd ~10-ish visually
+      let e = -Math.log(1-Math.random()) * POP_SD; // mean POP_SD
+      return POP_MEAN - POP_SD + e; // shift so bulk sits near 40-60, tail right
+    }
+    case 'uniform': return POP_MEAN - POP_SD*1.7 + Math.random()*POP_SD*3.4;
+    case 'bimodal': {
+      const branch = Math.random() < 0.5 ? -1 : 1;
+      return randNormal(POP_MEAN + branch*15, POP_SD*0.55);
+    }
+  }
+}
+
+// ---------- state ----------
+let sampleMeans = [];
+let lastSample = [];
+
+const popCanvas = document.getElementById('popCanvas');
+const sdmCanvas = document.getElementById('sdmCanvas');
+const popCtx = popCanvas.getContext('2d');
+const sdmCtx = sdmCanvas.getContext('2d');
+
+function fitCanvas(canvas, ctx){
+  const ratio = window.devicePixelRatio || 1;
+  const w = canvas.clientWidth || canvas.width;
+  canvas.width = w*ratio;
+  canvas.height = 260*ratio;
+  ctx.setTransform(ratio,0,0,ratio,0,0);
+  return {w, h:260};
+}
+
+function drawHistogram(ctx, dims, data, opts){
+  const {w,h} = dims;
+  ctx.clearRect(0,0,w,h);
+  const margin = {l:34, r:14, t:10, b:26};
+  const plotW = w - margin.l - margin.r;
+  const plotH = h - margin.t - margin.b;
+
+  const min = opts.xMin, max = opts.xMax;
+  const nBins = opts.bins || 24;
+  const binW = (max-min)/nBins;
+  const counts = new Array(nBins).fill(0);
+  data.forEach(v=>{
+    let idx = Math.floor((v-min)/binW);
+    if(idx<0) idx=0; if(idx>=nBins) idx=nBins-1;
+    counts[idx]++;
+  });
+  const maxCount = Math.max(1, ...counts);
+
+  // axis
+  ctx.strokeStyle = '#dfd6c2';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(margin.l, margin.t+plotH);
+  ctx.lineTo(margin.l+plotW, margin.t+plotH);
+  ctx.stroke();
+
+  // bars
+  ctx.fillStyle = opts.color;
+  for(let i=0;i<nBins;i++){
+    const barH = (counts[i]/maxCount)*plotH;
+    const x = margin.l + i*(plotW/nBins);
+    const bw = (plotW/nBins) - 1;
+    ctx.fillRect(x, margin.t+plotH-barH, Math.max(bw,1), barH);
+  }
+
+  // mean line(s)
+  if(opts.markers){
+    opts.markers.forEach(m=>{
+      const x = margin.l + ((m.value-min)/(max-min))*plotW;
+      ctx.strokeStyle = m.color;
+      ctx.lineWidth = 2;
+      ctx.setLineDash(m.dashed ? [4,3] : []);
+      ctx.beginPath();
+      ctx.moveTo(x, margin.t);
+      ctx.lineTo(x, margin.t+plotH);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    });
+  }
+
+  // x labels
+  ctx.fillStyle = '#7c8b87';
+  ctx.font = '10px "IBM Plex Mono", monospace';
+  ctx.textAlign = 'center';
+  for(let i=0;i<=4;i++){
+    const val = min + (i/4)*(max-min);
+    const x = margin.l + (i/4)*plotW;
+    ctx.fillText(Math.round(val), x, margin.t+plotH+16);
+  }
+}
+
+function drawPop(){
+  const dims = fitCanvas(popCanvas, popCtx);
+  // background population density approx via many draws cached once
+  if(!window._popCache || window._popCacheShape !== popShapeSel.value){
+    window._popCache = [];
+    for(let i=0;i<4000;i++) window._popCache.push(sampleFromPop(popShapeSel.value));
+    window._popCacheShape = popShapeSel.value;
+  }
+  const xMin = POP_MEAN-40, xMax = POP_MEAN+40;
+  drawHistogram(popCtx, dims, window._popCache, {
+    xMin, xMax, bins:36, color:getCSS('--pop-color'),
+    markers:[{value:POP_MEAN,color:getCSS('--ink-900'),dashed:true}]
+  });
+  // overlay current sample points as small gold ticks
+  if(lastSample.length){
+    const margin = {l:34,r:14,t:10,b:26};
+    const plotW = dims.w - margin.l - margin.r;
+    popCtx.fillStyle = getCSS('--sample-color');
+    lastSample.forEach(v=>{
+      const x = margin.l + ((v-xMin)/(xMax-xMin))*plotW;
+      popCtx.beginPath();
+      popCtx.arc(x, dims.h-margin.b+3, 3, 0, Math.PI*2);
+      popCtx.fill();
+    });
+  }
+}
+
+function drawSDM(){
+  const dims = fitCanvas(sdmCanvas, sdmCtx);
+  const xMin = POP_MEAN-30, xMax = POP_MEAN+30;
+  const markers = [{value:POP_MEAN, color:getCSS('--ink-900'), dashed:true}];
+  if(sampleMeans.length){
+    const mm = mean(sampleMeans);
+    markers.push({value:mm, color:getCSS('--sdm-color'), dashed:false});
+  }
+  drawHistogram(sdmCtx, dims, sampleMeans, {
+    xMin, xMax, bins:30, color:getCSS('--sdm-color'), markers
+  });
+}
+
+function getCSS(varName){
+  return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+}
+function mean(arr){ return arr.reduce((a,b)=>a+b,0)/arr.length; }
+function sd(arr){
+  const m = mean(arr);
+  const v = arr.reduce((a,b)=>a+(b-m)*(b-m),0)/(arr.length-1 || 1);
+  return Math.sqrt(v);
+}
+
+function updateStats(){
+  document.getElementById('statCount').textContent = sampleMeans.length;
+  if(sampleMeans.length>1){
+    document.getElementById('statMeanOfMeans').textContent = mean(sampleMeans).toFixed(2);
+    document.getElementById('statObsSE').textContent = sd(sampleMeans).toFixed(2);
+  } else {
+    document.getElementById('statMeanOfMeans').textContent = '—';
+    document.getElementById('statObsSE').textContent = '—';
+  }
+  const n = parseInt(nSlider.value);
+  document.getElementById('statPredSE').textContent = (POP_SD/Math.sqrt(n)).toFixed(2);
+}
+
+function drawOneSample(){
+  const n = parseInt(nSlider.value);
+  const shape = popShapeSel.value;
+  const vals = [];
+  for(let i=0;i<n;i++) vals.push(sampleFromPop(shape));
+  lastSample = vals;
+  sampleMeans.push(mean(vals));
+  drawPop();
+  drawSDM();
+  updateStats();
+}
+
+// ---------- controls wiring ----------
+const popShapeSel = document.getElementById('popShape');
+const nSlider = document.getElementById('nSlider');
+const nVal = document.getElementById('nVal');
+
+nSlider.addEventListener('input', ()=>{
+  nVal.textContent = nSlider.value;
+  updateStats();
+});
+popShapeSel.addEventListener('change', ()=>{
+  window._popCache = null;
+  resetAll();
+});
+
+document.getElementById('drawOne').addEventListener('click', drawOneSample);
+
+let runningMany = false;
+document.getElementById('drawMany').addEventListener('click', ()=>{
+  if(runningMany) return;
+  runningMany = true;
+  let count = 0;
+  const total = 200;
+  function step(){
+    // batch a few per frame for speed
+    for(let i=0;i<5 && count<total;i++){ drawOneSample(); count++; }
+    if(count<total){
+      requestAnimationFrame(step);
+    } else {
+      runningMany = false;
+    }
+  }
+  requestAnimationFrame(step);
+});
+
+function resetAll(){
+  sampleMeans = [];
+  lastSample = [];
+  drawPop();
+  drawSDM();
+  updateStats();
+}
+document.getElementById('resetBtn').addEventListener('click', resetAll);
+
+// ---------- Section 3: live SE formula ----------
+const sigmaSlider = document.getElementById('sigmaSlider');
+const sigmaVal = document.getElementById('sigmaVal');
+const nSlider2 = document.getElementById('nSlider2');
+const nVal2 = document.getElementById('nVal2');
+const seLive = document.getElementById('seLive');
+
+function updateSELive(){
+  const s = parseFloat(sigmaSlider.value);
+  const n = parseInt(nSlider2.value);
+  sigmaVal.textContent = s;
+  nVal2.textContent = n;
+  seLive.textContent = (s/Math.sqrt(n)).toFixed(2);
+}
+sigmaSlider.addEventListener('input', updateSELive);
+nSlider2.addEventListener('input', updateSELive);
+
+// ---------- Section 4: quiz ----------
+document.querySelectorAll('.quiz-q').forEach(q=>{
+  const answer = q.getAttribute('data-answer');
+  const opts = q.querySelectorAll('.opt');
+  const fb = q.querySelector('.feedback');
+  let answered = false;
+  opts.forEach(opt=>{
+    opt.addEventListener('click', ()=>{
+      if(answered) return;
+      answered = true;
+      const chosen = opt.getAttribute('data-val');
+      opts.forEach(o=>{
+        if(o.getAttribute('data-val') === answer) o.classList.add('correct');
+        else if(o === opt) o.classList.add('incorrect');
+      });
+      fb.classList.add('show');
+      if(chosen === answer){
+        fb.classList.add('good');
+        fb.textContent = "Correct.";
+      } else {
+        fb.classList.add('bad');
+        fb.textContent = "Not quite — the highlighted option is correct.";
+      }
+    });
+  });
+});
+
+// ---------- init ----------
+window.addEventListener('resize', ()=>{ drawPop(); drawSDM(); });
+resetAll();
+updateSELive();
+</script>
+</body>
+</html>
